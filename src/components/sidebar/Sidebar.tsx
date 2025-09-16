@@ -1,34 +1,29 @@
 import styles from './Sidebar.module.css';
-/*import logo from '../../assets/jrs-invest-logo.png';*/
-
-import { FiGrid, FiBarChart2, FiFileText } from 'react-icons/fi';
+import { NavLink } from 'react-router-dom'; 
+import { FiGrid, FiBarChart2, FiRepeat, FiFileText } from 'react-icons/fi';
 
 export function Sidebar() {
   return (
-    <nav className={styles.sidebar}>
-      <div className={styles.logoContainer}>
-        {/*<img src={logo} alt="JRS Invest Logo" />*/}
-        <h1 className={styles.logoText}>JRS Invest</h1>
-      </div>
-
-      <ul className={styles.navList}>
-        <li className={`${styles.navItem} ${styles.active}`}>
+    <aside className={styles.sidebar}>
+      <div className={styles.logo}>JRS Invest</div>
+      <nav className={styles.nav}>
+        <NavLink to="/dashboard" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
           <FiGrid size={20} />
           <span>Dashboard</span>
-        </li>
-        <li className={styles.navItem}>
+        </NavLink>
+        <NavLink to="/carteira" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
           <FiBarChart2 size={20} />
           <span>Carteira</span>
-        </li>
-        <li className={styles.navItem}>
-          <FiFileText size={20} />
+        </NavLink>
+        <NavLink to="/operacoes" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
+          <FiRepeat size={20} />
           <span>Operações</span>
-        </li>
-        <li className={styles.navItem}>
+        </NavLink>
+        <NavLink to="/relatorios" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
           <FiFileText size={20} />
           <span>Relatórios</span>
-        </li>
-      </ul>
-    </nav>
+        </NavLink>
+      </nav>
+    </aside>
   );
 }

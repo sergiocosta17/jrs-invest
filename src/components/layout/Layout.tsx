@@ -7,7 +7,7 @@ export function Layout() {
     <div className={styles.layout}>
       <Sidebar />
       <main className={styles.content}>
-        <Outlet /> {/* Aqui é onde o Dashboard será renderizado */}
+        <Outlet />
       </main>
     </div>
   );
