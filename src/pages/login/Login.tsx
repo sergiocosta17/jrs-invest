@@ -1,11 +1,11 @@
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import './login.css';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email('E-mail inválido').required('Obrigatório'),
-  password: Yup.string().min(6, 'Mínimo 6 caracteres').required('Obrigatório'),
+  password: Yup.string().min(1, 'Mínimo 1 caracteres').required('Obrigatório'),
 });
 
 export function Login() {
@@ -27,16 +27,28 @@ export function Login() {
           }, 500);
         }}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, errors, touched }) => (
           <Form className="login-form">
-            <Field type="email" name="email" placeholder="Email" className="input-field" />
-            <ErrorMessage name="email" component="div" className="error-text" />
+            <label htmlFor="email" className="input-label">E-mail</label>
+            <Field
+              id="email"
+              type="email"
+              name="email"
+              placeholder="seu@email.com"
+              className={`input-field ${errors.email && touched.email ? 'input-error' : ''}`}
+            />
 
-            <Field type="password" name="password" placeholder="Senha" className="input-field" />
-            <ErrorMessage name="password" component="div" className="error-text" />
+            <label htmlFor="password" className="input-label">Senha</label>
+            <Field
+              id="password"
+              type="password"
+              name="password"
+              placeholder="Sua senha"
+              className={`input-field ${errors.password && touched.password ? 'input-error' : ''}`}
+            />
 
             <button type="submit" className="login-button" disabled={isSubmitting}>
-              {isSubmitting ? 'Entrando...' : 'Entrar'}
+              {isSubmitting ? 'Entrar' : 'Entrar'}
             </button>
           </Form>
         )}
