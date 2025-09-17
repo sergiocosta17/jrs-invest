@@ -7,6 +7,9 @@ const axios = require('axios');
 const app = express();
 const port = process.env.PORT || 3001;
 
+const quotesCache = {};
+const CACHE_DURATION_MS = 5 * 60 * 1000;
+
 app.use(cors());
 app.use(express.json());
 
@@ -80,8 +83,7 @@ app.get('/api/dashboard/summary', async (req, res) => {
   try {
     const summaryQuery = `
       SELECT
-        SUM(CASE WHEN type = 'Compra' THEN total ELSE 0 END) AS total_investido,
-        SUM(CASE WHEN type = 'Venda' THEN total ELSE 0 END) AS total_vendido
+        SUM(CASE WHEN type = 'Compra' THEN total ELSE 0 END) AS total_investido
       FROM operations;
     `;
     const result = await pool.query(summaryQuery);
@@ -89,26 +91,6 @@ app.get('/api/dashboard/summary', async (req, res) => {
   } catch (err) {
     console.error("Erro ao calcular o resumo do dashboard:", err);
     res.status(500).json({ error: 'Erro interno do servidor' });
-  }
-});
-
-app.get('/api/quotes/:tickers', async (req, res) => {
-  const { tickers } = req.params;
-  const token = process.env.BRAPI_API_TOKEN;
-  if (!tickers) {
-    return res.status(400).json({ error: 'Nenhum ticker fornecido' });
-  }
-  const apiUrl = `https://brapi.dev/api/quote/${tickers}?token=${token}`;
-  try {
-    const response = await axios.get(apiUrl);
-    if (response.data && response.data.results) {
-      res.json(response.data.results);
-    } else {
-      res.status(404).json({ error: 'Ativos não encontrados ou erro na API externa.' });
-    }
-  } catch (err) {
-    console.error('Erro ao buscar dados da Brapi:', err.message);
-    res.status(500).json({ error: 'Não foi possível buscar as cotações' });
   }
 });
 
@@ -127,6 +109,65 @@ app.get('/api/portfolio', async (req, res) => {
   } catch (err) {
     console.error("Erro ao buscar portfolio:", err);
     res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+});
+
+app.get('/api/portfolio/detailed', async (req, res) => {
+  try {
+    const detailedQuery = `
+      SELECT
+        asset,
+        SUM(CASE WHEN type = 'Compra' THEN quantity ELSE -quantity END) as quantity,
+        SUM(CASE WHEN type = 'Compra' THEN total END) / NULLIF(SUM(CASE WHEN type = 'Compra' THEN quantity END), 0) as average_price,
+        (SUM(CASE WHEN type = 'Compra' THEN total END) / NULLIF(SUM(CASE WHEN type = 'Compra' THEN quantity END), 0)) * SUM(CASE WHEN type = 'Compra' THEN quantity ELSE -quantity END) as total_invested
+      FROM
+        operations
+      GROUP BY
+        asset
+      HAVING
+        SUM(CASE WHEN type = 'Compra' THEN quantity ELSE -quantity END) > 0;
+    `;
+    const result = await pool.query(detailedQuery);
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Erro ao buscar carteira detalhada:", err);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+});
+
+app.get('/api/quotes/:tickers', async (req, res) => {
+  const { tickers } = req.params;
+  const token = process.env.BRAPI_API_TOKEN;
+  const canonicalKey = tickers.split(',').sort().join(',');
+
+  if (quotesCache[canonicalKey] && (Date.now() - quotesCache[canonicalKey].timestamp < CACHE_DURATION_MS)) {
+    console.log(`Servindo cotações de '${canonicalKey}' a partir do cache.`);
+    return res.json(quotesCache[canonicalKey].data);
+  }
+
+  if (!tickers) {
+    return res.status(400).json({ error: 'Nenhum ticker fornecido' });
+  }
+
+  const apiUrl = `https://brapi.dev/api/quote/${tickers}?token=${token}`;
+
+  try {
+    console.log(`Buscando cotações de '${canonicalKey}' na API da Brapi...`);
+    const response = await axios.get(apiUrl);
+    
+    if (response.data && response.data.results) {
+      const responseData = response.data.results;
+      quotesCache[canonicalKey] = {
+        timestamp: Date.now(),
+        data: responseData
+      };
+      res.json(responseData);
+    } else {
+      res.status(404).json({ error: 'Ativos não encontrados ou erro na API externa.' });
+    }
+  } catch (err) {
+    console.error('Erro ao buscar dados da Brapi:', err.message);
+    res.status(500).json({ error: 'Não foi possível buscar as cotações' });
   }
 });
 
