@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
+const axios = require('axios');
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -75,10 +76,6 @@ app.delete('/api/operations/:id', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Servidor back-end rodando em http://localhost:${port}`);
-});
-
 app.get('/api/dashboard/summary', async (req, res) => {
   try {
     const summaryQuery = `
@@ -87,17 +84,51 @@ app.get('/api/dashboard/summary', async (req, res) => {
         SUM(CASE WHEN type = 'Venda' THEN total ELSE 0 END) AS total_vendido
       FROM operations;
     `;
-    
     const result = await pool.query(summaryQuery);
-    
     res.json(result.rows[0]);
-
   } catch (err) {
     console.error("Erro ao calcular o resumo do dashboard:", err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
 
+app.get('/api/quotes/:tickers', async (req, res) => {
+  const { tickers } = req.params;
+  const token = process.env.BRAPI_API_TOKEN;
+  if (!tickers) {
+    return res.status(400).json({ error: 'Nenhum ticker fornecido' });
+  }
+  const apiUrl = `https://brapi.dev/api/quote/${tickers}?token=${token}`;
+  try {
+    const response = await axios.get(apiUrl);
+    if (response.data && response.data.results) {
+      res.json(response.data.results);
+    } else {
+      res.status(404).json({ error: 'Ativos não encontrados ou erro na API externa.' });
+    }
+  } catch (err) {
+    console.error('Erro ao buscar dados da Brapi:', err.message);
+    res.status(500).json({ error: 'Não foi possível buscar as cotações' });
+  }
+});
+
+app.get('/api/portfolio', async (req, res) => {
+  try {
+    const portfolioQuery = `
+      SELECT
+        asset,
+        SUM(CASE WHEN type = 'Compra' THEN quantity ELSE -quantity END) AS quantity
+      FROM operations
+      GROUP BY asset
+      HAVING SUM(CASE WHEN type = 'Compra' THEN quantity ELSE -quantity END) > 0;
+    `;
+    const result = await pool.query(portfolioQuery);
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Erro ao buscar portfolio:", err);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+});
 
 app.listen(port, () => {
   console.log(`Servidor back-end rodando em http://localhost:${port}`);
