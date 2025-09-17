@@ -78,3 +78,27 @@ app.delete('/api/operations/:id', async (req, res) => {
 app.listen(port, () => {
   console.log(`Servidor back-end rodando em http://localhost:${port}`);
 });
+
+app.get('/api/dashboard/summary', async (req, res) => {
+  try {
+    const summaryQuery = `
+      SELECT
+        SUM(CASE WHEN type = 'Compra' THEN total ELSE 0 END) AS total_investido,
+        SUM(CASE WHEN type = 'Venda' THEN total ELSE 0 END) AS total_vendido
+      FROM operations;
+    `;
+    
+    const result = await pool.query(summaryQuery);
+    
+    res.json(result.rows[0]);
+
+  } catch (err) {
+    console.error("Erro ao calcular o resumo do dashboard:", err);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+});
+
+
+app.listen(port, () => {
+  console.log(`Servidor back-end rodando em http://localhost:${port}`);
+});

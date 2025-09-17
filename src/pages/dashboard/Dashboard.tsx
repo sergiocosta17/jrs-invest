@@ -1,95 +1,80 @@
-import { FiClock, FiDollarSign, FiTrendingUp } from 'react-icons/fi';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import styles from './Dashboard.module.css';
 
-interface Asset {
-  ticker: string;
-  name: string;
-  shares: number;
-  dailyChange: string;
-  totalValue: string;
-  totalReturn: string;
-  returnPercentage: string;
-  isPositive: boolean;
+interface DashboardSummary {
+  total_investido: string;
+  total_vendido: string;
 }
 
 export function Dashboard() {
+  const [summary, setSummary] = useState<DashboardSummary | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const portfolioSummary: Asset[] = [
-    { ticker: 'PETR4', name: 'Petrobras PN', shares: 100, dailyChange: '+5.2%', totalValue: 'R$ 3.215,00', totalReturn: '+R$ 365,00', returnPercentage: '(12.81%)', isPositive: true },
-    { ticker: 'VALE3', name: 'Vale ON', shares: 50, dailyChange: '+2.1%', totalValue: 'R$ 3.445,00', totalReturn: '+R$ 155,00', returnPercentage: '(4.71%)', isPositive: true },
-    { ticker: 'ITUB4', name: 'Itaú Unibanco PN', shares: 200, dailyChange: '-1.8%', totalValue: 'R$ 4.970,00', totalReturn: '-R$ 90,00', returnPercentage: '(-1.78%)', isPositive: false },
-  ];
+  useEffect(() => {
+    const fetchSummary = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/api/dashboard/summary');
+        setSummary(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar dados do dashboard:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchSummary();
+  }, []);
+
+  if (isLoading) {
+    return <div className={styles.centeredMessage}>Carregando dados do Dashboard...</div>;
+  }
+
+  const valorInvestido = summary ? parseFloat(summary.total_investido) : 0;
+  
+  const valorAtual = valorInvestido;
+  const rentabilidadeValor = valorAtual - valorInvestido;
+  const rentabilidadePercentual = valorInvestido > 0 ? (rentabilidadeValor / valorInvestido) * 100 : 0;
 
   return (
-      <main>
+    <div className={styles.container}>
+      <h1 className={styles.title}>Dashboard</h1>
 
-        <h1 className={styles.title}>Dashboard</h1>
-
-        <div className={styles.summaryCards}>
-
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <span>Valor Investido</span>
-              <FiDollarSign color="#888" />
-            </div>
-            <p className={styles.cardValue}>R$ 0,00</p>
-          </div>
-
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <span>Valor Atual</span>
-              <FiClock color="#888" />
-            </div>
-            <p className={styles.cardValue}>R$ 0,00</p>
-          </div>
-
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <span>Rentabilidade</span>
-              <FiTrendingUp color="#888" />
-            </div>
-            <p className={`${styles.cardValue} ${styles.positive}`}>R$ 0,00</p>
-            <span className={`${styles.percentage} ${styles.positive}`}>0.00%</span>
-          </div>
-          
+      <div className={styles.cardContainer}>
+        <div className={styles.card}>
+          <header>
+            <p>Valor Investido</p>
+            <span>$</span>
+          </header>
+          <strong>
+            {valorInvestido.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+          </strong>
         </div>
+
+        <div className={styles.card}>
+          <header>
+            <p>Valor Atual</p>
+            <span>ⓘ</span>
+          </header>
+          <strong>
+            {valorAtual.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+          </strong>
+          <small className={styles.cardSubtext}>*Valor de custo. Cotações em breve.</small>
+        </div>
+
+        <div className={styles.card}>
+          <header>
+            <p>Rentabilidade</p>
+            <span>↗</span>
+          </header>
+          <strong style={{ color: rentabilidadeValor >= 0 ? '#33cc95' : '#e53e3e' }}>
+            {rentabilidadeValor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+          </strong>
+          <span style={{ color: rentabilidadeValor >= 0 ? '#33cc95' : '#e53e3e' }}>
+            {rentabilidadeValor >= 0 ? '+' : ''}{rentabilidadePercentual.toFixed(2)}%
+          </span>
+        </div>
+      </div>
       
-        <div className={styles.portfolioSummary}>
-
-          <h2>Resumo da Carteira</h2>
-          <p className={styles.subtitle}>Visão geral dos seus investimentos</p>
-          
-          <div className={styles.assetList}>
-            {portfolioSummary.map((asset) => (
-              <div className={styles.assetCard} key={asset.ticker}>
-
-                <div className={styles.assetInfo}>
-
-                  <div className={styles.assetTickerGroup}>
-                    <span className={styles.assetTicker}>{asset.ticker}</span>                   
-                    <span className={asset.isPositive ? styles.tagPositive : styles.tagNegative}>{asset.dailyChange}</span>
-                  </div>
-
-                  <span className={styles.assetName}>{asset.name}</span>
-                  <span className={styles.assetShares}>{asset.shares} cotas</span>
-
-                </div>
-
-                <div className={styles.assetValues}>
-
-                  <span className={styles.assetTotalValue}>{asset.totalValue}</span>
-                  <span className={asset.isPositive ? styles.positive : styles.negative}
-                    >{asset.totalReturn} {asset.returnPercentage}
-                  </span>
-                
-                </div>
-
-              </div>
-            ))}
-          </div>
-
-        </div>
-
-      </main>
+    </div>
   );
 }

@@ -1,144 +1,56 @@
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
+/* src/pages/dashboard/Dashboard.module.css */
+
+.container {
+  width: 100%;
 }
 
 .title {
   font-size: 2rem;
-  font-weight: 600;
   margin-bottom: 2rem;
   color: #1a222e;
 }
 
-.summaryCards {
+.cardContainer {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2.5rem;
+  gap: 2rem;
 }
 
 .card {
-  background-color: #ffffff;
-  padding: 1.5rem;
+  background: #fff;
+  padding: 1.5rem 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   border: 1px solid #e0e6ed;
 }
 
-.cardHeader {
+.card header {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  color: #888;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
+  color: #666;
 }
 
-.cardValue {
-  font-size: 1.75rem;
-  font-weight: 600;
-  color: #1a222e;
-  margin: 0;
-}
-
-.percentage {
-  font-size: 0.9rem;
-}
-
-.positive {
-  color: #00a23b;
-}
-
-.negative {
-  color: #f44336;
-}
-
-.portfolioSummary {
-  background-color: #ffffff;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e0e6ed;
-}
-
-.portfolioSummary h2 {
-  font-size: 1.25rem;
-  margin-top: 0;
-  color: #1a222e;
-}
-
-.subtitle {
-  color: #888;
-  margin-top: 0;
-  margin-bottom: 2rem;
-  font-size: 0.9rem;
-}
-
-.assetList {
-  display: flex;
-  flex-direction: column;
-}
-
-.assetCard {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.2rem 0;
-  border-bottom: 1px solid #e0e6ed;
-}
-
-.assetCard:last-child {
-  border-bottom: none;
-}
-
-.assetInfo, .assetValues {
-  display: flex;
-  flex-direction: column;
-}
-
-.assetValues {
-  align-items: flex-end;
-}
-
-.assetTickerGroup {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.25rem;
-}
-
-.assetTicker {
-  font-weight: 600;
-  font-size: 1.1rem;
-  color: #1a222e;
-}
-
-.tagPositive, .tagNegative {
-  font-size: 0.75rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 6px;
+.card strong {
+  display: block;
+  margin-top: 1rem;
+  font-size: 2.25rem;
   font-weight: 500;
-  color: #fff;
+  line-height: 3rem;
 }
 
-.tagPositive {
-  background-color: #00a23b;
+.cardSubtext {
+  display: block;
+  font-size: 0.8rem;
+  color: #999;
+  margin-top: 0.5rem;
 }
 
-.tagNegative {
-  background-color: #f44336;
-}
-
-.assetName, .assetShares {
-  font-size: 0.9rem;
-  color: #888;
-}
-
-.assetTotalValue {
-  font-weight: 600;
-  font-size: 1.1rem;
-  color: #1a222e;
-  margin-bottom: 0.25rem;
+.centeredMessage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 1.2rem;
+  color: #666;
 }
