@@ -1,0 +1,104 @@
+/* src/pages/operacoes/Operacoes.module.css */
+
+.container {
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  font-size: 2rem;
+  color: #1a222e;
+}
+
+.newOperationButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: #1a222e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.newOperationButton:hover {
+  background-color: #344054;
+}
+
+.contentCard {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e0e6ed;
+}
+
+.contentCard h2 {
+  font-size: 1.25rem;
+  margin-top: 0;
+  color: #1a222e;
+}
+
+.subtitle {
+  color: #888;
+  margin-top: 0rem;
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+}
+
+.operationsTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.operationsTable th,
+.operationsTable td {
+  padding: 1rem;
+  text-align: center;
+  border-bottom: 1px solid #e0e6ed;
+  vertical-align: middle;
+}
+
+.operationsTable th {
+  color: #888;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.operationsTable td {
+  color: #1a222e;
+  font-size: 0.9rem;
+}
+
+.tagCompra{
+  padding: 0.25rem 0.75rem;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  display: inline-block;
+  background-color: #1a222e;
+  color: white;
+  border: 1px solid #d0d5dd;
+}
+
+.tagVenda {
+  padding: 0.25rem 1rem;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  display: inline-block;
+  background-color: grey;
+  color: white;
+  border: 1px solid #d0d5dd;
+}

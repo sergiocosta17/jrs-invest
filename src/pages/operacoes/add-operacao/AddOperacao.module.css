@@ -1,0 +1,50 @@
+.formContainer h2 {
+  margin-top: 0;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.row {
+  display: flex;
+  gap: 1rem;
+}
+
+.input {
+  padding: 0.75rem;
+  border: 1.5px solid #1a222e;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease-in-out; 
+}
+
+.inputError {
+  border-color: #e53e3e;
+}
+
+.submitButton {
+  padding: 0.8rem 1rem;
+  background-color: #1a222e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.submitButton:disabled {
+  background-color: #ccc;
+}
