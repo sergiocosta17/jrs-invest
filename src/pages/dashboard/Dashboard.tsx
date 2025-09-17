@@ -1,6 +1,6 @@
 import { FiClock, FiDollarSign, FiLogOut, FiTrendingUp } from 'react-icons/fi';
 import styles from './Dashboard.module.css';
-import { useNavigate } from 'react-router-dom'; // PASSO 1: Importar
+import { useNavigate } from 'react-router-dom';
 
 interface Asset {
   ticker: string;
