@@ -1,7 +1,7 @@
 export function Carteira() {
   return (
     <div>
-      <h1>Carteira Page</h1>
+      <h1>Carteira</h1>
     </div>
   );
 }

@@ -5,24 +5,6 @@
   margin-bottom: 2rem;
 }
 
-.userMenu {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  font-weight: 500;
-  color: #555;
-}
-
-.logoutButton {
-  background-color:#1a222e;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  color: white;
-  font-size: 0.9rem;
-}
-
 .title {
   font-size: 2rem;
   font-weight: 600;
@@ -89,7 +71,7 @@
 
 .subtitle {
   color: #888;
-  margin-top: -0.5rem;
+  margin-top: 0;
   margin-bottom: 2rem;
   font-size: 0.9rem;
 }

@@ -2,6 +2,7 @@ import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import './login.css';
+import { useEffect } from 'react';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email('E-mail inválido').required('Obrigatório'),
@@ -10,6 +11,18 @@ const LoginSchema = Yup.object().shape({
 
 export function Login() {
   const navigate = useNavigate();
+
+    useEffect(() => {
+    window.history.pushState(null, '', window.location.href);
+      const handlePopState = () => {
+        window.history.pushState(null, '', window.location.href);
+    };
+    window.addEventListener('popstate', handlePopState);
+      return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  },
+[])
 
   return (
     <div className="login-wrapper">
