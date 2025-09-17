@@ -1,5 +1,6 @@
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
+import axios from 'axios';
 import styles from './AddOperacao.module.css';
 
 const OperationSchema = Yup.object().shape({
@@ -12,32 +13,52 @@ const OperationSchema = Yup.object().shape({
   price: Yup.number().positive('Deve ser positivo').required('Obrigatório'),
 });
 
-interface AddOperationFormProps {
-  onClose: () => void;
-  onOperationAdded: (newOperation: any) => void;
+interface OperationData {
+  id?: string;
+  date: string;
+  type: 'Compra' | 'Venda';
+  asset: string;
+  quantity: number;
+  price: number;
 }
 
-export function AddOperationForm({ onClose, onOperationAdded }: AddOperationFormProps) {
+interface AddOperationFormProps {
+  onClose: () => void;
+  onSave: (operation: any) => void;
+  operationToEdit?: OperationData | null;
+}
+
+export function AddOperationForm({ onClose, onSave, operationToEdit }: AddOperationFormProps) {
+  const initialValues = {
+    date: operationToEdit ? new Date(operationToEdit.date).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10),
+    type: operationToEdit ? operationToEdit.type : 'Compra',
+    asset: operationToEdit ? operationToEdit.asset : '',
+    quantity: operationToEdit ? operationToEdit.quantity : 0,
+    price: operationToEdit ? operationToEdit.price : 0,
+  };
+
   return (
     <div className={styles.formContainer}>
-      <h2>Nova Operação</h2>
+      <h2>{operationToEdit ? 'Editar Operação' : 'Nova Operação'}</h2>
       <Formik
-        initialValues={{
-          date: new Date().toISOString().split('T')[0],
-          type: 'Compra',
-          asset: '',
-          quantity: 0,
-          price: 0
-        }}
+        initialValues={initialValues}
         validationSchema={OperationSchema}
+        enableReinitialize
         onSubmit={async (values, { setSubmitting }) => {
           try {
-            const formattedDate = new Date(values.date).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
-            const newOperation = { ...values, id: new Date().toISOString(), date: formattedDate, total: values.quantity * values.price };
-            onOperationAdded(newOperation);
+            let savedOperation;
+            if (operationToEdit) {
+              const response = await axios.put(`http://localhost:3001/api/operations/${operationToEdit.id}`, values);
+              savedOperation = response.data;
+            } else {
+              const response = await axios.post('http://localhost:3001/api/operations', values);
+              savedOperation = response.data;
+            }
+            onSave(savedOperation);
             onClose();
           } catch (error) {
-            console.error("Erro ao adicionar operação:", error);
+            console.error("Erro ao salvar operação:", error);
+            alert("Não foi possível salvar a operação.");
           } finally {
             setSubmitting(false);
           }
@@ -48,54 +69,30 @@ export function AddOperationForm({ onClose, onOperationAdded }: AddOperationForm
             <div className={styles.row}>
               <div className={styles.fieldGroup}>
                 <label>Data</label>
-                <Field
-                  name="date"
-                  type="date"
-                  className={`${styles.input} ${errors.date && touched.date ? styles.inputError : ''}`}
-                />
+                <Field name="date" type="date" className={`${styles.input} ${errors.date && touched.date ? styles.inputError : ''}`} />
               </div>
               <div className={styles.fieldGroup}>
                 <label>Tipo</label>
-                <Field
-                  as="select"
-                  name="type"
-                  className={`${styles.input} ${errors.type && touched.type ? styles.inputError : ''}`}
-                >
+                <Field as="select" name="type" className={`${styles.input} ${errors.type && touched.type ? styles.inputError : ''}`}>
                   <option value="Compra">Compra</option>
                   <option value="Venda">Venda</option>
                 </Field>
               </div>
             </div>
-            
             <div className={styles.fieldGroup}>
               <label>Ativo</label>
-              <Field
-                name="asset"
-                placeholder="Ex: PETR4"
-                className={`${styles.input} ${errors.asset && touched.asset ? styles.inputError : ''}`}
-              />
+              <Field name="asset" placeholder="Ex: PETR4" className={`${styles.input} ${errors.asset && touched.asset ? styles.inputError : ''}`} />
             </div>
-
             <div className={styles.row}>
               <div className={styles.fieldGroup}>
                 <label>Quantidade</label>
-                <Field
-                  name="quantity"
-                  type="number"
-                  className={`${styles.input} ${errors.quantity && touched.quantity ? styles.inputError : ''}`}
-                />
+                <Field name="quantity" type="number" className={`${styles.input} ${errors.quantity && touched.quantity ? styles.inputError : ''}`} />
               </div>
               <div className={styles.fieldGroup}>
                 <label>Preço (R$)</label>
-                <Field
-                  name="price"
-                  type="number"
-                  step="0.01"
-                  className={`${styles.input} ${errors.price && touched.price ? styles.inputError : ''}`}
-                />
+                <Field name="price" type="number" step="0.01" className={`${styles.input} ${errors.price && touched.price ? styles.inputError : ''}`} />
               </div>
             </div>
-
             <button type="submit" disabled={isSubmitting} className={styles.submitButton}>
               {isSubmitting ? 'Salvando...' : 'Salvar Operação'}
             </button>

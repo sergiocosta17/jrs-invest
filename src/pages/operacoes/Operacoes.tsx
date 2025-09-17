@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 import styles from './Operacoes.module.css';
-import { FiPlus } from 'react-icons/fi';
+import { FiPlus, FiEdit, FiTrash2 } from 'react-icons/fi';
 import { Modal } from '../../components/modal/Modal';
 import { AddOperationForm } from './add-operacao/AddOperacao';
 
@@ -16,33 +17,58 @@ interface Operation {
 
 export function Operacoes() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingOperation, setEditingOperation] = useState<Operation | null>(null);
   const [operations, setOperations] = useState<Operation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchOperations = async () => {
       try {
-        const mockData: Operation[] = [
-          { id: '1', date: '14/01/2024', type: 'Compra', asset: 'PETR4', quantity: 100, price: 28.50, total: 2850.00 },
-          { id: '2', date: '19/01/2024', type: 'Compra', asset: 'VALE3', quantity: 50, price: 65.80, total: 3290.00 },
-          { id: '3', date: '04/02/2024', type: 'Venda', asset: 'ITUB4', quantity: 50, price: 26.10, total: 1305.00 },
-          { id: '4', date: '09/02/2024', type: 'Compra', asset: 'BBDC4', quantity: 150, price: 15.20, total: 2280.00 },
-        ];
-        setOperations(mockData);
+        const response = await axios.get('http://localhost:3001/api/operations');
+        setOperations(response.data);
       } catch (error) {
         console.error("Erro ao buscar operações", error);
       } finally {
         setIsLoading(false);
       }
     };
-
     fetchOperations();
   }, []);
 
-  const handleOpenModal = () => setIsModalOpen(true);
-  const handleCloseModal = () => setIsModalOpen(false);
-  const handleAddNewOperation = (newOperation: Operation) => {
-    setOperations(prevOperations => [newOperation, ...prevOperations]);
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingOperation(null);
+  };
+
+  const handleOpenCreateModal = () => {
+    setEditingOperation(null);
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEditModal = (operation: Operation) => {
+    setEditingOperation(operation);
+    setIsModalOpen(true);
+  };
+
+  const handleSaveOperation = (savedOperation: Operation) => {
+    if (operations.some(op => op.id === savedOperation.id)) {
+      setOperations(operations.map(op => op.id === savedOperation.id ? savedOperation : op));
+    } else {
+      setOperations(prev => [savedOperation, ...prev]);
+    }
+  };
+
+  const handleDeleteOperation = async (id: string | number) => {
+    const isConfirmed = window.confirm('Tem certeza que deseja excluir esta operação?');
+    if (isConfirmed) {
+      try {
+        await axios.delete(`http://localhost:3001/api/operations/${id}`);
+        setOperations(operations.filter(op => String(op.id) !== String(id)));
+      } catch (error) {
+        console.error('Erro ao excluir operação', error);
+        alert('Não foi possível excluir a operação.');
+      }
+    }
   };
 
   if (isLoading) {
@@ -53,7 +79,7 @@ export function Operacoes() {
     <div className={styles.container}>
       <header className={styles.header}>
         <h1>Histórico de Operações</h1>
-        <button className={styles.newOperationButton} onClick={handleOpenModal}>
+        <button className={styles.newOperationButton} onClick={handleOpenCreateModal}>
           <FiPlus size={20} />
           Nova Operação
         </button>
@@ -71,30 +97,46 @@ export function Operacoes() {
               <th>Quantidade</th>
               <th>Preço</th>
               <th>Total</th>
+              <th>Ações</th>
             </tr>
           </thead>
           <tbody>
             {operations.map((op) => (
               <tr key={op.id}>
-                <td>{op.date}</td>
+                <td>{new Date(op.date).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</td>
                 <td>
-                  <span className={op.type === 'Compra' ? styles.tagCompra : styles.tagVenda}>
+                  <span className={`${styles.tag} ${op.type === 'Compra' ? styles.tagCompra : styles.tagVenda}`}>
                     {op.type}
                   </span>
                 </td>
                 <td>{op.asset}</td>
                 <td>{op.quantity}</td>
-                <td>{op.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-                <td>{op.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                <td>{Number(op.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                <td>{Number(op.total).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                <td>
+                  <div className={styles.actions}>
+                    <button className={styles.actionButton} onClick={() => handleOpenEditModal(op)}>
+                      <FiEdit size={16} />
+                    </button>
+                    <button
+                      className={`${styles.actionButton} ${styles.deleteButton}`}
+                      onClick={() => handleDeleteOperation(String(op.id))}
+                    >
+                      <FiTrash2 size={16} />
+                    </button>
+                  </div>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-        <AddOperationForm 
+        <AddOperationForm
           onClose={handleCloseModal}
-          onOperationAdded={handleAddNewOperation}
+          onSave={handleSaveOperation}
+          operationToEdit={editingOperation}
         />
       </Modal>
     </div>

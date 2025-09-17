@@ -1,7 +1,14 @@
-/* src/pages/operacoes/Operacoes.module.css */
-
 .container {
-  width: 100%;
+  --primary-text: #1a222e;
+  --secondary-text: #888;
+  --brand-color: #1a222e;
+  --brand-color-hover: #344054;
+  --border-color: #e0e6ed;
+  --card-bg: #fff;
+  --tag-bg-compra: #1a222e;
+  --tag-bg-venda: #667085;
+  --tag-text: #fff;
+  --danger-hover-color: #e53e3e;
 }
 
 .header {
@@ -13,7 +20,7 @@
 
 .header h1 {
   font-size: 2rem;
-  color: #1a222e;
+  color: var(--primary-text);
 }
 
 .newOperationButton {
@@ -21,7 +28,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  background-color: #1a222e;
+  background-color: var(--brand-color);
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -32,26 +39,26 @@
 }
 
 .newOperationButton:hover {
-  background-color: #344054;
+  background-color: var(--brand-color-hover);
 }
 
 .contentCard {
-  background-color: #fff;
+  background-color: var(--card-bg);
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e0e6ed;
+  border: 1px solid var(--border-color);
 }
 
 .contentCard h2 {
   font-size: 1.25rem;
   margin-top: 0;
-  color: #1a222e;
+  color: var(--primary-text);
 }
 
 .subtitle {
-  color: #888;
-  margin-top: 0rem;
+  color: var(--secondary-text);
+  margin-top: 0;
   margin-bottom: 2rem;
   font-size: 0.9rem;
 }
@@ -64,41 +71,74 @@
 .operationsTable th,
 .operationsTable td {
   padding: 1rem;
-  text-align: center;
-  border-bottom: 1px solid #e0e6ed;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
   vertical-align: middle;
 }
 
 .operationsTable th {
-  color: #888;
+  color: var(--secondary-text);
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .operationsTable td {
-  color: #1a222e;
+  color: var(--primary-text);
   font-size: 0.9rem;
 }
 
-.tagCompra{
+.tag {
   padding: 0.25rem 0.75rem;
   border-radius: 16px;
   font-size: 0.8rem;
   font-weight: 500;
+  color: var(--tag-text);
   display: inline-block;
-  background-color: #1a222e;
-  color: white;
-  border: 1px solid #d0d5dd;
+  text-align: center;
+  min-width: 70px;
+}
+
+.tagCompra {
+  background-color: var(--tag-bg-compra);
 }
 
 .tagVenda {
-  padding: 0.25rem 1rem;
-  border-radius: 16px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  display: inline-block;
-  background-color: grey;
-  color: white;
-  border: 1px solid #d0d5dd;
+  background-color: var(--tag-bg-venda);
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.actionButton {
+  background: transparent;
+  border: none;
+  padding: 0.25rem;
+  cursor: pointer;
+  color: var(--secondary-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease-in-out;
+}
+
+.actionButton:hover {
+  color: var(--primary-text);
+  transform: scale(1.2);
+}
+
+.deleteButton:hover {
+  color: var(--danger-hover-color);
+}
+
+
+.operationsTable th:last-child,
+.operationsTable td:last-child {
+  width: 100px;
+  text-align: center;
 }
