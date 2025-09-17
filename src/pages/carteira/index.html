@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Carteira de Investimentos</title>
+    <link rel="stylesheet" href="styles.css"> 
+</head>
+<body>
+    <main class="dashboard-container">
+        <div class="header-carteira">
+            <div class="titulo-carteira">
+                <h2>Meus Ativos</h2>
+                <p>Todos os seus investimentos em um só lugar</p>
+            </div>
+            <button class="botao-adicionar-ativo">
+                + Adicionar Ativo
+            </button>
+        </div>
+
+        <table class="tabela-ativos">
+            <thead>
+                <tr>
+                    <th>Ativo</th>
+                    <th>Quantidade</th>
+                    <th>Preço Médio</th>
+                    <th>Preço Atual</th>
+                    <th>Variação</th>
+                    <th>Total Investido</th>
+                    <th>Valor Atual</th>
+                    <th>Resultado</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-corpo">
+                </tbody>
+        </table>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
