@@ -3,6 +3,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Login } from './pages/login/Login';
 import { Dashboard } from './pages/dashboard/Dashboard';
 import { Layout } from './components/layout/Layout';
+import { Operacoes } from './pages/operacoes/Operacoes';
+import { Carteira } from './pages/carteira/Carteira';
+import { Relatorios } from './pages/relatorios/Relatorios';
 
 function App() {
   return (
@@ -14,7 +17,9 @@ function App() {
 
           <Route element={<Layout />}>
             <Route path="/dashboard" element={<Dashboard />} />
-            {/* Outras rotas aqui */}
+            <Route path="/carteira" element={<Carteira />} />
+            <Route path="/operacoes" element={<Operacoes />} />
+            <Route path="/relatorios" element={<Relatorios />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/login" replace />} />
