@@ -1,5 +1,6 @@
 import { FiClock, FiDollarSign, FiLogOut, FiTrendingUp } from 'react-icons/fi';
 import styles from './Dashboard.module.css';
+import { useNavigate } from 'react-router-dom'; // PASSO 1: Importar
 
 interface Asset {
   ticker: string;
@@ -13,7 +14,11 @@ interface Asset {
 }
 
 export function Dashboard() {
-  // Dados de exemplo (virá da API)
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    navigate('/login');
+  };
+
   const portfolioSummary: Asset[] = [
     { ticker: 'PETR4', name: 'Petrobras PN', shares: 100, dailyChange: '+5.2%', totalValue: 'R$ 3.215,00', totalReturn: '+R$ 365,00', returnPercentage: '(12.81%)', isPositive: true },
     { ticker: 'VALE3', name: 'Vale ON', shares: 50, dailyChange: '+2.1%', totalValue: 'R$ 3.445,00', totalReturn: '+R$ 155,00', returnPercentage: '(4.71%)', isPositive: true },
@@ -26,7 +31,7 @@ export function Dashboard() {
         <div />
         <div className={styles.userMenu}>
           <span>Usuário Demo</span>
-          <button className={styles.logoutButton}>
+          <button className={styles.logoutButton} onClick={handleLogout}>
             Sair <FiLogOut />
           </button>
         </div>
