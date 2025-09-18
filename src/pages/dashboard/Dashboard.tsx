@@ -2,10 +2,6 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from './Dashboard.module.css';
 
-//interface SummaryResponse {
-//  total_investido: string;
-//}
-
 interface PortfolioPosition {
   asset: string;
   quantity: string;

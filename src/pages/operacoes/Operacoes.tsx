@@ -78,7 +78,7 @@ export function Operacoes() {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <h1>Histórico de Operações</h1>
+        <h1>Operações</h1>
         <button className={styles.newOperationButton} onClick={handleOpenCreateModal}>
           <FiPlus size={20} />
           Nova Operação
