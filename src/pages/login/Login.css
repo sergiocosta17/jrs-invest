@@ -71,3 +71,24 @@ body {
 .login-button:hover {
   filter: brightness(0.95);
 }
+
+.register-link {
+  margin-top: 2rem;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.register-link a {
+  color: var(--brand-dark);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.login-error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  text-align: center;
+}

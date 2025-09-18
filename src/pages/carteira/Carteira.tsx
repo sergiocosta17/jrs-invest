@@ -1,9 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import api from '../../services/api';
 import styles from './Carteira.module.css';
-import { FiPlus } from 'react-icons/fi';
-import { Modal } from '../../components/modal/Modal';
-import { AddOperationForm } from '../operacoes/add-operacao/AddOperacao';
 import { motion } from 'framer-motion';
 
 interface PositionDetailed {
@@ -27,18 +24,17 @@ interface Quote {
 export function Carteira() {
   const [positions, setPositions] = useState<PositionDetailed[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const hasFetched = useRef(false);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setIsLoading(true);
-      const portfolioResponse = await axios.get('http://localhost:3001/api/portfolio/detailed');
+      const portfolioResponse = await api.get('/api/portfolio/detailed');
       const portfolio: PositionDetailed[] = portfolioResponse.data;
 
       if (portfolio.length > 0) {
         const tickers = portfolio.map(p => p.asset).join(',');
-        const quotesResponse = await axios.get(`http://localhost:3001/api/quotes/${tickers}`);
+        const quotesResponse = await api.get(`/api/quotes/${tickers}`);
         const quotes: Quote[] = quotesResponse.data;
 
         const quotesMap = quotes.reduce((acc, quote) => {
@@ -75,18 +71,13 @@ export function Carteira() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (hasFetched.current) return;
     hasFetched.current = true;
     fetchData();
-  }, []);
-
-  const handleSaveOperation = () => {
-    setIsModalOpen(false);
-    fetchData();
-  };
+  }, [fetchData]);
 
   if (isLoading) {
     return <div className={styles.centeredMessage}>Carregando sua carteira...</div>;
@@ -101,10 +92,6 @@ export function Carteira() {
     >
       <header className={styles.header}>
         <h1>Meus Ativos</h1>
-        <button className={styles.addButton} onClick={() => setIsModalOpen(true)}>
-          <FiPlus size={20} />
-          Adicionar Ativo
-        </button>
       </header>
 
       <div className={styles.contentCard}>
@@ -149,13 +136,6 @@ export function Carteira() {
           </table>
         </div>
       </div>
-      
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <AddOperationForm 
-          onClose={() => setIsModalOpen(false)}
-          onSave={handleSaveOperation}
-        />
-      </Modal>
     </motion.div>
   );
 }

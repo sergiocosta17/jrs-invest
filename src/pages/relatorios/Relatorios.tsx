@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import api from '../../services/api'; // ALTERADO: Importa 'api' em vez de 'axios'
 import styles from './Relatorios.module.css';
 
 export function Relatorios() {
@@ -11,7 +11,8 @@ export function Relatorios() {
   const handleGenerateReport = async () => {
     setIsDownloading(true);
     try {
-      const response = await axios.get('http://localhost:3001/api/reports', {
+      // ALTERADO: Usa 'api.get' e o caminho relativo
+      const response = await api.get('/api/reports', {
         params: {
           format,
           startDate,
@@ -23,7 +24,7 @@ export function Relatorios() {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      const fileName = `JRS-Invest-${startDate}-a-${endDate}.${format}`;
+      const fileName = `relatorio-operacoes-${startDate}-a-${endDate}.${format}`;
       link.setAttribute('download', fileName);
       
       document.body.appendChild(link);
@@ -40,6 +41,7 @@ export function Relatorios() {
   };
 
   return (
+    // O JSX não muda, então o resto do arquivo continua igual
     <div className={styles.container}>
       <h1 className={styles.title}>Relatórios</h1>
       <p className={styles.subtitle}>Exporte o histórico de suas operações por período.</p>

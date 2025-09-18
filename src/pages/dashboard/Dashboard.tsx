@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import styles from './Dashboard.module.css';
 import { motion } from 'framer-motion';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
@@ -38,8 +38,8 @@ export function Dashboard() {
     const fetchData = async () => {
       try {
         const [portfolioResponse, ibovResponse] = await Promise.all([
-          axios.get('http://localhost:3001/api/portfolio/detailed'),
-          axios.get('http://localhost:3001/api/chart/^BVSP')
+          api.get('/api/portfolio/detailed'),
+          api.get('/api/chart/^BVSP')
         ]);
 
         setIbovData(ibovResponse.data);
@@ -50,7 +50,7 @@ export function Dashboard() {
 
         if (portfolio.length > 0) {
           const tickers = portfolio.map(p => p.asset).join(',');
-          const quotesResponse = await axios.get<Quote[]>(`http://localhost:3001/api/quotes/${tickers}`);
+          const quotesResponse = await api.get<Quote[]>(`/api/quotes/${tickers}`);
           const quotes = quotesResponse.data;
 
           const quotesMap = quotes.reduce((acc, quote) => {

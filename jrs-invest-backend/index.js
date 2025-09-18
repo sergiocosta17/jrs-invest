@@ -3,8 +3,11 @@ const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
 const axios = require('axios');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const csv = require('fast-csv');
 const PDFDocument = require('pdfkit');
+const auth = require('./middleware/auth');
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -19,13 +22,66 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL
 });
 
-app.get('/', (req, res) => {
-  res.send('API JRS Invest está no ar!');
+app.post('/api/register', async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ error: 'E-mail e senha são obrigatórios.' });
+  }
+  try {
+    const userExists = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    if (userExists.rowCount > 0) {
+      return res.status(409).json({ error: 'Este e-mail já está em uso.' });
+    }
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    const newUser = await pool.query(
+      'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id, email',
+      [email, hashedPassword]
+    );
+    res.status(201).json({
+      message: 'Usuário cadastrado com sucesso!',
+      user: newUser.rows[0]
+    });
+  } catch (err) {
+    console.error("Erro ao cadastrar usuário:", err);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
 });
 
-app.get('/api/operations', async (req, res) => {
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ error: 'E-mail e senha são obrigatórios.' });
+  }
   try {
-    const result = await pool.query('SELECT * FROM operations ORDER BY date DESC');
+    const userResult = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    if (userResult.rowCount === 0) {
+      return res.status(401).json({ error: 'Credenciais inválidas.' });
+    }
+    const user = userResult.rows[0];
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: 'Credenciais inválidas.' });
+    }
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '8h' }
+    );
+    res.json({
+      message: 'Login bem-sucedido!',
+      token: token,
+      user: { id: user.id, email: user.email }
+    });
+  } catch (err) {
+    console.error("Erro no login:", err);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+});
+
+app.get('/api/operations', auth, async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM operations WHERE user_id = $1 ORDER BY date DESC', [req.user.userId]);
     res.json(result.rows);
   } catch (err) {
     console.error("Erro ao buscar operações:", err);
@@ -33,13 +89,13 @@ app.get('/api/operations', async (req, res) => {
   }
 });
 
-app.post('/api/operations', async (req, res) => {
+app.post('/api/operations', auth, async (req, res) => {
   const { date, type, asset, quantity, price } = req.body;
   const total = Number(quantity) * Number(price);
   try {
     const newOperation = await pool.query(
-      'INSERT INTO operations (date, type, asset, quantity, price, total) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-      [date, type, asset, quantity, price, total]
+      'INSERT INTO operations (date, type, asset, quantity, price, total, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+      [date, type, asset, quantity, price, total, req.user.userId]
     );
     res.status(201).json(newOperation.rows[0]);
   } catch (err) {
@@ -48,17 +104,17 @@ app.post('/api/operations', async (req, res) => {
   }
 });
 
-app.put('/api/operations/:id', async (req, res) => {
+app.put('/api/operations/:id', auth, async (req, res) => {
   try {
     const { id } = req.params;
     const { date, type, asset, quantity, price } = req.body;
     const total = Number(quantity) * Number(price);
     const updatedOp = await pool.query(
-      'UPDATE operations SET date = $1, type = $2, asset = $3, quantity = $4, price = $5, total = $6 WHERE id = $7 RETURNING *',
-      [date, type, asset, quantity, price, total, id]
+      'UPDATE operations SET date = $1, type = $2, asset = $3, quantity = $4, price = $5, total = $6 WHERE id = $7 AND user_id = $8 RETURNING *',
+      [date, type, asset, quantity, price, total, id, req.user.userId]
     );
     if (updatedOp.rowCount === 0) {
-      return res.status(404).json({ error: 'Operação não encontrada' });
+      return res.status(404).json({ error: 'Operação não encontrada ou não pertence a este usuário.' });
     }
     res.json(updatedOp.rows[0]);
   } catch (err) {
@@ -67,12 +123,12 @@ app.put('/api/operations/:id', async (req, res) => {
   }
 });
 
-app.delete('/api/operations/:id', async (req, res) => {
+app.delete('/api/operations/:id', auth, async (req, res) => {
   try {
     const { id } = req.params;
-    const deleteOp = await pool.query('DELETE FROM operations WHERE id = $1', [id]);
+    const deleteOp = await pool.query('DELETE FROM operations WHERE id = $1 AND user_id = $2', [id, req.user.userId]);
     if (deleteOp.rowCount === 0) {
-      return res.status(404).json({ error: 'Operação não encontrada' });
+      return res.status(404).json({ error: 'Operação não encontrada ou não pertence a este usuário.' });
     }
     res.status(204).send();
   } catch (err) {
@@ -81,40 +137,7 @@ app.delete('/api/operations/:id', async (req, res) => {
   }
 });
 
-app.get('/api/dashboard/summary', async (req, res) => {
-  try {
-    const summaryQuery = `
-      SELECT
-        SUM(CASE WHEN type = 'Compra' THEN total END) AS total_investido
-      FROM operations;
-    `;
-    const result = await pool.query(summaryQuery);
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error("Erro ao calcular o resumo do dashboard:", err);
-    res.status(500).json({ error: 'Erro interno do servidor' });
-  }
-});
-
-app.get('/api/portfolio', async (req, res) => {
-  try {
-    const portfolioQuery = `
-      SELECT
-        asset,
-        SUM(CASE WHEN type = 'Compra' THEN quantity ELSE -quantity END) AS quantity
-      FROM operations
-      GROUP BY asset
-      HAVING SUM(CASE WHEN type = 'Compra' THEN quantity ELSE -quantity END) > 0;
-    `;
-    const result = await pool.query(portfolioQuery);
-    res.json(result.rows);
-  } catch (err) {
-    console.error("Erro ao buscar portfolio:", err);
-    res.status(500).json({ error: 'Erro interno do servidor' });
-  }
-});
-
-app.get('/api/portfolio/detailed', async (req, res) => {
+app.get('/api/portfolio/detailed', auth, async (req, res) => {
   try {
     const detailedQuery = `
       WITH portfolio_summary AS (
@@ -123,22 +146,19 @@ app.get('/api/portfolio/detailed', async (req, res) => {
           SUM(CASE WHEN type = 'Compra' THEN quantity ELSE -quantity END) as quantity,
           SUM(CASE WHEN type = 'Compra' THEN total END) as total_buy_value,
           SUM(CASE WHEN type = 'Compra' THEN quantity END) as total_buy_quantity
-        FROM
-          operations
-        GROUP BY
-          asset
+        FROM operations
+        WHERE user_id = $1
+        GROUP BY asset
       )
       SELECT
         asset,
         quantity,
         total_buy_value / NULLIF(total_buy_quantity, 0) as average_price,
         (total_buy_value / NULLIF(total_buy_quantity, 0)) * quantity as total_invested
-      FROM
-        portfolio_summary
-      WHERE
-        quantity > 0;
+      FROM portfolio_summary
+      WHERE quantity > 0;
     `;
-    const result = await pool.query(detailedQuery);
+    const result = await pool.query(detailedQuery, [req.user.userId]);
     res.json(result.rows);
   } catch (err) {
     console.error("Erro ao buscar carteira detalhada:", err);
@@ -146,15 +166,15 @@ app.get('/api/portfolio/detailed', async (req, res) => {
   }
 });
 
-app.get('/api/reports', async (req, res) => {
+app.get('/api/reports', auth, async (req, res) => {
   const { format, startDate, endDate } = req.query;
   if (!format || !startDate || !endDate) {
     return res.status(400).json({ error: 'Parâmetros format, startDate e endDate são obrigatórios.' });
   }
   try {
     const operationsResult = await pool.query(
-      'SELECT * FROM operations WHERE date BETWEEN $1 AND $2 ORDER BY date ASC',
-      [startDate, endDate]
+      'SELECT * FROM operations WHERE user_id = $1 AND date BETWEEN $2 AND $3 ORDER BY date ASC',
+      [req.user.userId, startDate, endDate]
     );
     const operations = operationsResult.rows;
     const fileName = `relatorio-operacoes-${startDate}-a-${endDate}`;
@@ -172,22 +192,12 @@ app.get('/api/reports', async (req, res) => {
       doc.moveDown(2);
       doc.fontSize(10).font('Helvetica-Bold');
       const tableTop = doc.y;
-      doc.text('Data', 50, tableTop);
-      doc.text('Tipo', 120, tableTop);
-      doc.text('Ativo', 170, tableTop);
-      doc.text('Qtd.', 240, tableTop, { width: 50, align: 'right' });
-      doc.text('Preço', 300, tableTop, { width: 70, align: 'right' });
-      doc.text('Total', 380, tableTop, { width: 80, align: 'right' });
+      doc.text('Data', 50, tableTop); doc.text('Tipo', 120, tableTop); doc.text('Ativo', 170, tableTop); doc.text('Qtd.', 240, tableTop, { width: 50, align: 'right' }); doc.text('Preço', 300, tableTop, { width: 70, align: 'right' }); doc.text('Total', 380, tableTop, { width: 80, align: 'right' });
       doc.moveDown();
       doc.font('Helvetica');
       operations.forEach(op => {
         const y = doc.y;
-        doc.text(new Date(op.date).toLocaleDateString('pt-BR', {timeZone: 'UTC'}), 50, y);
-        doc.text(op.type, 120, y);
-        doc.text(op.asset, 170, y);
-        doc.text(op.quantity.toString(), 240, y, { width: 50, align: 'right' });
-        doc.text(Number(op.price).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}), 300, y, { width: 70, align: 'right' });
-        doc.text(Number(op.total).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}), 380, y, { width: 80, align: 'right' });
+        doc.text(new Date(op.date).toLocaleDateString('pt-BR', {timeZone: 'UTC'}), 50, y); doc.text(op.type, 120, y); doc.text(op.asset, 170, y); doc.text(op.quantity.toString(), 240, y, { width: 50, align: 'right' }); doc.text(Number(op.price).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}), 300, y, { width: 70, align: 'right' }); doc.text(Number(op.total).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}), 380, y, { width: 80, align: 'right' });
         doc.moveDown();
       });
       doc.end();
@@ -200,23 +210,17 @@ app.get('/api/reports', async (req, res) => {
   }
 });
 
-app.get('/api/chart/:ticker', async (req, res) => {
+app.get('/api/chart/:ticker', auth, async (req, res) => {
   const { ticker } = req.params;
   const token = process.env.BRAPI_API_TOKEN;
   const cacheKey = `chart-${ticker}`;
-
   if (quotesCache[cacheKey] && (Date.now() - quotesCache[cacheKey].timestamp < 60 * 60 * 1000)) {
-    console.log(`Servindo dados de gráfico para '${ticker}' a partir do cache.`);
     return res.json(quotesCache[cacheKey].data);
   }
-
   const apiUrl = `https://brapi.dev/api/quote/${ticker}?range=3mo&interval=1d&token=${token}`;
-
   try {
-    console.log(`Buscando dados de gráfico para '${ticker}' na API da Brapi...`);
     const response = await axios.get(apiUrl);
     const chartData = response.data.results[0];
-
     if (chartData) {
       quotesCache[cacheKey] = {
         timestamp: Date.now(),
@@ -227,31 +231,23 @@ app.get('/api/chart/:ticker', async (req, res) => {
       res.status(404).json({ error: 'Dados para o ticker não encontrados.' });
     }
   } catch (err) {
-    console.error(`Erro ao buscar dados de gráfico da Brapi para ${ticker}:`, err.message);
     res.status(500).json({ error: 'Não foi possível buscar os dados do gráfico.' });
   }
 });
 
-app.get('/api/quotes/:tickers', async (req, res) => {
+app.get('/api/quotes/:tickers', auth, async (req, res) => {
   const { tickers } = req.params;
   const token = process.env.BRAPI_API_TOKEN;
   const canonicalKey = tickers.split(',').sort().join(',');
-
   if (quotesCache[canonicalKey] && (Date.now() - quotesCache[canonicalKey].timestamp < CACHE_DURATION_MS)) {
-    console.log(`Servindo cotações de '${canonicalKey}' a partir do cache.`);
     return res.json(quotesCache[canonicalKey].data);
   }
-
   if (!tickers) {
     return res.status(400).json({ error: 'Nenhum ticker fornecido' });
   }
-
   const apiUrl = `https://brapi.dev/api/quote/${tickers}?token=${token}`;
-
   try {
-    console.log(`Buscando cotações de '${canonicalKey}' na API da Brapi...`);
     const response = await axios.get(apiUrl);
-    
     if (response.data && response.data.results) {
       const responseData = response.data.results;
       quotesCache[canonicalKey] = {
@@ -267,6 +263,7 @@ app.get('/api/quotes/:tickers', async (req, res) => {
     res.status(500).json({ error: 'Não foi possível buscar as cotações' });
   }
 });
+
 
 app.listen(port, () => {
   console.log(`Servidor back-end rodando em http://localhost:${port}`);

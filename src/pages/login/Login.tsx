@@ -1,28 +1,17 @@
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import api from '../../services/api';
 import './login.css';
-import { useEffect } from 'react';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email('E-mail inválido').required('Obrigatório'),
-  password: Yup.string().min(1, 'Mínimo 1 caracteres').required('Obrigatório'),
+  password: Yup.string().required('Obrigatório'),
 });
 
 export function Login() {
   const navigate = useNavigate();
-
-    useEffect(() => {
-    window.history.pushState(null, '', window.location.href);
-      const handlePopState = () => {
-        window.history.pushState(null, '', window.location.href);
-    };
-    window.addEventListener('popstate', handlePopState);
-      return () => {
-      window.removeEventListener('popstate', handlePopState);
-    };
-  },
-[])
 
   return (
     <div className="login-wrapper">
@@ -31,17 +20,28 @@ export function Login() {
       <Formik
         initialValues={{ email: '', password: '' }}
         validationSchema={LoginSchema}
-        onSubmit={(values, { setSubmitting }) => {
-          setSubmitting(true);
-          setTimeout(() => {
-            console.log(values);
-            navigate('/dashboard');
+        onSubmit={async (values, { setSubmitting, setStatus }) => {
+          try {
+            const response = await api.post('/api/login', values);
+            
+            localStorage.setItem('authToken', response.data.token);
+
+            toast.success('Login bem-sucedido!');
+            navigate('/dashboard', { replace: true });
+
+          } catch (error: any) {
+            const errorMessage = error.response?.data?.error || 'Não foi possível fazer login.';
+            setStatus(errorMessage);
+            toast.error(errorMessage);
+          } finally {
             setSubmitting(false);
-          }, 500);
+          }
         }}
       >
-        {({ isSubmitting, errors, touched }) => (
+        {({ isSubmitting, errors, touched, status }) => (
           <Form className="login-form">
+            {status && <div className="login-error-message">{status}</div>}
+            
             <label htmlFor="email" className="input-label">E-mail</label>
             <Field
               id="email"
@@ -61,12 +61,15 @@ export function Login() {
             />
 
             <button type="submit" className="login-button" disabled={isSubmitting}>
-              {isSubmitting ? 'Entrar' : 'Entrar'}
+              {isSubmitting ? 'Entrando...' : 'Entrar'}
             </button>
           </Form>
         )}
       </Formik>
-      <h5>Demo: Use qualquer email e senha para entrar</h5>
+
+      <div className="register-link">
+        Não tem uma conta? <Link to="/register">Cadastre-se</Link>
+      </div>
     </div>
   );
 }

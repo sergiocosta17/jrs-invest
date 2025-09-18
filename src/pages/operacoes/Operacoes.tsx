@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect, useCallback } from 'react';
+import api from '../../services/api';
 import toast from 'react-hot-toast';
 import styles from './Operacoes.module.css';
 import { FiPlus, FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -23,20 +23,22 @@ export function Operacoes() {
   const [operations, setOperations] = useState<Operation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchOperations = async () => {
-      try {
-        const response = await axios.get('http://localhost:3001/api/operations');
-        setOperations(response.data);
-      } catch (error) {
-        console.error("Erro ao buscar operações", error);
-        toast.error("Não foi possível carregar as operações.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchOperations();
+  const fetchOperations = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await api.get('/api/operations');
+      setOperations(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar operações", error);
+      toast.error("Não foi possível carregar as operações.");
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchOperations();
+  }, [fetchOperations]);
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -53,19 +55,15 @@ export function Operacoes() {
     setIsModalOpen(true);
   };
 
-  const handleSaveOperation = (savedOperation: Operation) => {
-    if (operations.some(op => op.id === savedOperation.id)) {
-      setOperations(operations.map(op => op.id === savedOperation.id ? savedOperation : op));
-    } else {
-      setOperations(prev => [savedOperation, ...prev]);
-    }
+  const handleSaveOperation = () => {
+    fetchOperations();
   };
 
   const handleDeleteOperation = async (id: string | number) => {
     const isConfirmed = window.confirm('Tem certeza que deseja excluir esta operação?');
     if (isConfirmed) {
       try {
-        await axios.delete(`http://localhost:3001/api/operations/${id}`);
+        await api.delete(`/api/operations/${id}`);
         setOperations(operations.filter(op => String(op.id) !== String(id)));
         toast.success('Operação excluída com sucesso!');
       } catch (error) {
