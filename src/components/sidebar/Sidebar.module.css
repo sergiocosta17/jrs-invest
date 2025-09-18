@@ -1,18 +1,18 @@
 .sidebar {
-  width: 290px;
-  flex-shrink: 0;
-  background-color: #1a222e;
-  color: #fff;
+  width: 250px;
+  background-color: var(--brand-dark);
+  color: var(--white);
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
 }
 
 .logo {
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 2.5rem;
-  text-align: center;
+  color: var(--white);
 }
 
 .nav {
@@ -33,12 +33,12 @@
 }
 
 .navLink:hover {
-  background-color: #2d3748;
-  color: #fff;
+  background-color: var(--brand-dark-hover);
+  color: var(--white);
 }
 
 .active {
-  background-color: #4a5568;
-  color: #fff;
+  background-color: var(--brand-dark-hover);
+  color: var(--white);
   font-weight: 600;
 }

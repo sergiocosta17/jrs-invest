@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import styles from './Carteira.module.css';
+import { FiPlus } from 'react-icons/fi';
 import { Modal } from '../../components/modal/Modal';
 import { AddOperationForm } from '../operacoes/add-operacao/AddOperacao';
+import { motion } from 'framer-motion';
 
 interface PositionDetailed {
   asset: string;
@@ -82,6 +84,7 @@ export function Carteira() {
   }, []);
 
   const handleSaveOperation = () => {
+    setIsModalOpen(false);
     fetchData();
   };
 
@@ -90,9 +93,18 @@ export function Carteira() {
   }
 
   return (
-    <div className={styles.container}>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className={styles.container}
+    >
       <header className={styles.header}>
-        <h1>Carteira</h1>
+        <h1>Meus Ativos</h1>
+        <button className={styles.addButton} onClick={() => setIsModalOpen(true)}>
+          <FiPlus size={20} />
+          Adicionar Ativo
+        </button>
       </header>
 
       <div className={styles.contentCard}>
@@ -116,11 +128,7 @@ export function Carteira() {
             <tbody>
               {positions.map(pos => (
                 <tr key={pos.asset}>
-                  <td>
-                    <div className={styles.assetName}>
-                      {pos.asset}
-                    </div>
-                  </td>
+                  <td><div className={styles.assetName}>{pos.asset}</div></td>
                   <td>{pos.quantity}</td>
                   <td>{Number(pos.average_price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
                   <td>{pos.current_price?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
@@ -148,6 +156,6 @@ export function Carteira() {
           onSave={handleSaveOperation}
         />
       </Modal>
-    </div>
+    </motion.div>
   );
 }

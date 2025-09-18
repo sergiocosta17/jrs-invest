@@ -11,7 +11,7 @@
 
 .header h1 {
   font-size: 2rem;
-  color: #1a222e;
+  color: var(--text-primary);
 }
 
 .addButton {
@@ -19,8 +19,8 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  background-color: #1a222e;
-  color: #fff;
+  background-color: var(--brand-dark);
+  color: var(--white);
   border: none;
   border-radius: 8px;
   font-size: 1rem;
@@ -30,25 +30,25 @@
 }
 
 .addButton:hover {
-  background-color: #344054;
+  background-color: var(--brand-dark-hover);
 }
 
 .contentCard {
-  background-color: #fff;
+  background-color: var(--white);
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e0e6ed;
+  border: 1px solid var(--border-color);
 }
 
 .contentCard h2 {
   font-size: 1.25rem;
   margin-top: 0;
-  color: #1a222e;
+  color: var(--text-primary);
 }
 
 .subtitle {
-  color: #888;
+  color: var(--text-light);
   margin-top: 0;
   margin-bottom: 2rem;
   font-size: 0.9rem;
@@ -66,14 +66,14 @@
 .assetsTable th,
 .assetsTable td {
   padding: 1rem;
-  text-align: center;
-  border-bottom: 1px solid #e0e6ed;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
   vertical-align: middle;
   white-space: nowrap;
 }
 
 .assetsTable th {
-  color: #888;
+  color: var(--text-light);
   font-size: 0.8rem;
   text-transform: uppercase;
 }
@@ -86,7 +86,7 @@
   display: flex;
   flex-direction: column;
   font-weight: 600;
-  color: #1a222e;
+  color: var(--text-primary);
 }
 
 .tag {
@@ -94,26 +94,26 @@
   border-radius: 16px;
   font-size: 0.8rem;
   font-weight: 500;
-  color: #fff;
+  color: var(--white);
   min-width: 60px;
   text-align: center;
   display: inline-block;
 }
 
 .tagPositive {
-  background-color: #00a23b;
+  background-color: var(--success);
 }
 
 .tagNegative {
-  background-color: #f44336;
+  background-color: var(--danger);
 }
 
 .positive {
-  color: #00a23b;
+  color: var(--success);
 }
 
 .negative {
-  color: #f44336;
+  color: var(--danger);
 }
 
 .positive span,
@@ -126,5 +126,5 @@
 .centeredMessage {
   padding: 3rem;
   text-align: center;
-  color: #888;
+  color: var(--text-light);
 }

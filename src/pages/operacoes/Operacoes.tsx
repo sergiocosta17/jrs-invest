@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 import styles from './Operacoes.module.css';
 import { FiPlus, FiEdit, FiTrash2 } from 'react-icons/fi';
 import { Modal } from '../../components/modal/Modal';
 import { AddOperationForm } from './add-operacao/AddOperacao';
+import { motion } from 'framer-motion';
 
 interface Operation {
   id: string;
@@ -28,6 +30,7 @@ export function Operacoes() {
         setOperations(response.data);
       } catch (error) {
         console.error("Erro ao buscar operações", error);
+        toast.error("Não foi possível carregar as operações.");
       } finally {
         setIsLoading(false);
       }
@@ -64,9 +67,10 @@ export function Operacoes() {
       try {
         await axios.delete(`http://localhost:3001/api/operations/${id}`);
         setOperations(operations.filter(op => String(op.id) !== String(id)));
+        toast.success('Operação excluída com sucesso!');
       } catch (error) {
         console.error('Erro ao excluir operação', error);
-        alert('Não foi possível excluir a operação.');
+        toast.error('Não foi possível excluir a operação.');
       }
     }
   };
@@ -76,9 +80,14 @@ export function Operacoes() {
   }
 
   return (
-    <div className={styles.container}>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className={styles.container}
+    >
       <header className={styles.header}>
-        <h1>Operações</h1>
+        <h1>Histórico de Operações</h1>
         <button className={styles.newOperationButton} onClick={handleOpenCreateModal}>
           <FiPlus size={20} />
           Nova Operação
@@ -139,6 +148,6 @@ export function Operacoes() {
           operationToEdit={editingOperation}
         />
       </Modal>
-    </div>
+    </motion.div>
   );
 }

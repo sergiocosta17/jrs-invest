@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import styles from './Dashboard.module.css';
+import { motion } from 'framer-motion';
 
-interface PortfolioPosition {
+interface PositionDetailed {
   asset: string;
   quantity: string;
+  total_invested: string;
 }
 
 interface Quote {
@@ -16,24 +18,24 @@ export function Dashboard() {
   const [valorInvestido, setValorInvestido] = useState(0);
   const [valorAtual, setValorAtual] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const hasFetched = useRef(false);
 
   useEffect(() => {
+    if (hasFetched.current) return;
+    hasFetched.current = true;
+
     const fetchData = async () => {
       try {
-        const [summaryResponse, portfolioResponse] = await Promise.all([
-          axios.get('http://localhost:3001/api/dashboard/summary'),
-          axios.get('http://localhost:3001/api/portfolio')
-        ]);
+        const portfolioResponse = await axios.get('http://localhost:3001/api/portfolio/detailed');
+        const portfolio: PositionDetailed[] = portfolioResponse.data;
 
-        const totalInvestido = parseFloat(summaryResponse.data.total_investido) || 0;
+        const totalInvestido = portfolio.reduce((acc, position) => acc + parseFloat(position.total_invested), 0);
         setValorInvestido(totalInvestido);
-
-        const portfolio: PortfolioPosition[] = portfolioResponse.data;
 
         if (portfolio.length > 0) {
           const tickers = portfolio.map(p => p.asset).join(',');
-          const quotesResponse = await axios.get(`http://localhost:3001/api/quotes/${tickers}`);
-          const quotes: Quote[] = quotesResponse.data;
+          const quotesResponse = await axios.get<Quote[]>(`http://localhost:3001/api/quotes/${tickers}`);
+          const quotes = quotesResponse.data;
 
           const quotesMap = quotes.reduce((acc, quote) => {
             acc[quote.symbol] = quote.regularMarketPrice;
@@ -48,7 +50,6 @@ export function Dashboard() {
 
           setValorAtual(valorAtualCalculado);
         }
-
       } catch (error) {
         console.error("Erro ao buscar dados do dashboard:", error);
       } finally {
@@ -66,11 +67,16 @@ export function Dashboard() {
   }
 
   return (
-    <div className={styles.container}>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className={styles.container}
+    >
       <h1 className={styles.title}>Dashboard</h1>
       <div className={styles.cardContainer}>
         <div className={styles.card}>
-          <header><p>Valor Investido</p><span>$</span></header>
+          <header><p>Custo da Carteira</p><span>$</span></header>
           <strong>{valorInvestido.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</strong>
         </div>
         <div className={styles.card}>
@@ -79,14 +85,14 @@ export function Dashboard() {
         </div>
         <div className={styles.card}>
           <header><p>Rentabilidade</p><span>↗</span></header>
-          <strong style={{ color: rentabilidadeValor >= 0 ? '#33cc95' : '#e53e3e' }}>
-            {rentabilidadeValor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-          </strong>
-          <span style={{ color: rentabilidadeValor >= 0 ? '#33cc95' : '#e53e3e' }}>
-            {rentabilidadeValor >= 0 ? '+' : ''}{rentabilidadePercentual.toFixed(2)}%
-          </span>
+        <strong className={rentabilidadeValor >= 0 ? styles.positive : styles.negative}>
+          {rentabilidadeValor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+        </strong>
+        <span className={rentabilidadeValor >= 0 ? styles.positive : styles.negative}>
+          {rentabilidadeValor >= 0 ? '+' : ''}{rentabilidadePercentual.toFixed(2)}%
+        </span>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

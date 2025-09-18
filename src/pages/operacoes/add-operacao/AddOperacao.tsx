@@ -1,6 +1,7 @@
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 import styles from './AddOperacao.module.css';
 
 const OperationSchema = Yup.object().shape({
@@ -56,9 +57,10 @@ export function AddOperationForm({ onClose, onSave, operationToEdit }: AddOperat
             }
             onSave(savedOperation);
             onClose();
+            toast.success(`Operação ${operationToEdit ? 'atualizada' : 'salva'} com sucesso!`);
           } catch (error) {
             console.error("Erro ao salvar operação:", error);
-            alert("Não foi possível salvar a operação.");
+            toast.error("Não foi possível salvar a operação.");
           } finally {
             setSubmitting(false);
           }
