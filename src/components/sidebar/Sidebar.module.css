@@ -8,12 +8,14 @@
   flex-shrink: 0;
 }
 
-.logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 2.5rem;
-  color: var(--white);
+.logoContainer {
+  margin-bottom: 0.8rem;
   text-align: center;
+}
+
+.logoImage {
+  max-width: 150px;
+  height: auto;
 }
 
 .nav {

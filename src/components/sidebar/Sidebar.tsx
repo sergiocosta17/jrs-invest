@@ -1,11 +1,18 @@
 import styles from './Sidebar.module.css';
-import { NavLink } from 'react-router-dom'; 
-import { FiGrid, FiBarChart2, FiRepeat, FiFileText } from 'react-icons/fi';
+import { Link, NavLink } from 'react-router-dom'; // 1. IMPORTE O 'Link'
+import { FiGrid, FiRepeat, FiFileText, FiBarChart2 } from 'react-icons/fi';
+import logoImage from '../../assets/jrs-invest-logo.svg';
 
 export function Sidebar() {
   return (
     <aside className={styles.sidebar}>
-      <div className={styles.logo}>JRS Invest</div>
+      <div className={styles.logoContainer}>
+        {/* 2. ENVOLVA A IMAGEM COM O COMPONENTE <Link> */}
+        <Link to="/dashboard">
+          <img src={logoImage} alt="JRS Invest Logo" className={styles.logoImage} />
+        </Link>
+      </div>
+      
       <nav className={styles.nav}>
         <NavLink to="/dashboard" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
           <FiGrid size={20} />
