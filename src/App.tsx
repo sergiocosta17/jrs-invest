@@ -9,6 +9,7 @@ import { Operacoes } from './pages/operacoes/Operacoes';
 import { Carteira } from './pages/carteira/Carteira';
 import { Relatorios } from './pages/relatorios/Relatorios';
 import { ProtectedRoute } from './components/protected-route/ProtectedRoute';
+import { Profile } from './pages/profile/Profile';
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
             <Route path="/operacoes" element={<Operacoes />} />
             <Route path="/carteira" element={<Carteira />} />
             <Route path="/relatorios" element={<Relatorios />} />
+            <Route path="/perfil" element={<Profile />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/login" replace />} />

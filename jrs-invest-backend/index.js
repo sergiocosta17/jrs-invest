@@ -68,13 +68,43 @@ app.post('/api/login', async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '8h' }
     );
+    
+    delete user.password;
+
     res.json({
       message: 'Login bem-sucedido!',
       token: token,
-      user: { id: user.id, email: user.email }
+      user: user
     });
   } catch (err) {
     console.error("Erro no login:", err);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+});
+
+app.get('/api/profile', auth, async (req, res) => {
+  try {
+    const userProfile = await pool.query('SELECT id, email, name, birth_date, phone FROM users WHERE id = $1', [req.user.userId]);
+    if (userProfile.rowCount === 0) {
+      return res.status(404).json({ error: 'Usuário não encontrado.' });
+    }
+    res.json(userProfile.rows[0]);
+  } catch (err) {
+    console.error("Erro ao buscar perfil:", err);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+});
+
+app.put('/api/profile', auth, async (req, res) => {
+  const { name, birth_date, phone } = req.body;
+  try {
+    const updatedUser = await pool.query(
+      'UPDATE users SET name = $1, birth_date = $2, phone = $3 WHERE id = $4 RETURNING id, email, name, birth_date, phone',
+      [name, birth_date, phone, req.user.userId]
+    );
+    res.json(updatedUser.rows[0]);
+  } catch (err) {
+    console.error("Erro ao atualizar perfil:", err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
@@ -263,7 +293,6 @@ app.get('/api/quotes/:tickers', auth, async (req, res) => {
     res.status(500).json({ error: 'Não foi possível buscar as cotações' });
   }
 });
-
 
 app.listen(port, () => {
   console.log(`Servidor back-end rodando em http://localhost:${port}`);

@@ -1,32 +1,45 @@
 .header {
   width: 100%;
   padding: 1rem 2rem;
-  background-color: #f5f8fa;
+  background-color: var(--page-bg);
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  border-bottom: 1px solid #e0e6ed;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .userMenu {
   display: flex;
   align-items: center;
   gap: 1.5rem;
+}
+
+.profileLink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: var(--text-secondary);
   font-weight: 500;
-  color: #1a222e;
+  transition: color 0.2s;
+}
+
+.profileLink:hover {
+  color: var(--text-primary);
 }
 
 .logoutButton {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: #1a222e;
+  background: none;
+  border: none;
   cursor: pointer;
-  color: white;
+  color: var(--text-light);
   font-size: 0.9rem;
   transition: color 0.2s;
 }
 
 .logoutButton:hover {
-  color: #555;
+  color: var(--text-primary);
 }

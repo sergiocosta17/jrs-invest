@@ -1,6 +1,6 @@
-import { FiLogOut } from 'react-icons/fi';
+import { FiLogOut, FiUser } from 'react-icons/fi';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from './Header.module.css';
-import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 export function Header() {
@@ -8,7 +8,6 @@ export function Header() {
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
-    
     toast.success('Você saiu com sucesso.');
     navigate('/login');
   };
@@ -16,6 +15,10 @@ export function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.userMenu}>
+        <Link to="/perfil" className={styles.profileLink}>
+          <FiUser />
+          <span>Meu Perfil</span>
+        </Link>
         <button className={styles.logoutButton} onClick={handleLogout}>
           Sair <FiLogOut />
         </button>
