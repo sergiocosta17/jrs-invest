@@ -1,69 +1,123 @@
-# React + TypeScript + Vite
+JRS Invest: Plataforma de Gerenciamento de Investimentos
+📖 Sobre o Projeto
+JRS Invest é uma aplicação web completa e intuitiva, desenhada para auxiliar investidores a consolidar e monitorar suas carteiras de ativos de forma eficiente. A plataforma oferece uma visão clara e detalhada sobre o desempenho dos investimentos, permitindo que os usuários tomem decisões mais informadas e estratégicas.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Com uma interface moderna e responsiva, o usuário pode cadastrar suas operações de compra e venda de ativos, visualizar a rentabilidade da carteira em tempo real, acompanhar a evolução de indicadores importantes do mercado, como o Ibovespa, e gerar relatórios detalhados.
 
-Currently, two official plugins are available:
+✨ Funcionalidades Principais
+Dashboard Analítico: Uma visão geral e consolidada da performance da carteira, com indicadores chave como valor investido, valor atual e rentabilidade. Inclui um gráfico interativo com a performance histórica do Ibovespa.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Gestão de Carteira Detalhada: Visualize todos os seus ativos em um só lugar, com informações como quantidade, preço médio, cotação atual, variação diária e resultado financeiro.
 
-## Expanding the ESLint configuration
+Registro de Operações: Adicione, edite e remova operações de compra e venda de ativos de forma simples e rápida.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Autenticação Segura: Sistema de login e registro de usuários com autenticação baseada em tokens (JWT) para garantir a segurança e a privacidade dos dados.
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Perfil de Usuário: Página dedicada onde os usuários podem visualizar e atualizar suas informações pessoais.
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+Design Responsivo: A interface se adapta perfeitamente a diferentes tamanhos de tela, proporcionando uma ótima experiência tanto em desktops quanto em dispositivos móveis.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Geração de Relatórios: Exporte o histórico de operações em formatos PDF ou CSV para análises mais aprofundadas ou para declarações.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+🚀 Tecnologias Utilizadas
+Este projeto foi construído utilizando as seguintes tecnologias:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Frontend:
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+React: Biblioteca para construção da interface de usuário.
+
+TypeScript: Superset do JavaScript que adiciona tipagem estática.
+
+Vite: Ferramenta de build para um desenvolvimento frontend mais rápido.
+
+Axios: Cliente HTTP para realizar requisições à API.
+
+Framer Motion: Para animações fluidas e modernas.
+
+Recharts: Para a criação de gráficos interativos.
+
+React Router DOM: Para gerenciamento de rotas na aplicação.
+
+Formik & Yup: Para construção e validação de formulários.
+
+Backend:
+
+Node.js: Ambiente de execução para o JavaScript no servidor.
+
+Express.js: Framework para a construção da API REST.
+
+PostgreSQL: Banco de dados relacional para armazenamento dos dados.
+
+JWT (JSON Web Tokens): Para a implementação de autenticação segura.
+
+Bcrypt.js: Para a criptografia de senhas.
+
+🛠️ Como Executar o Projeto
+Siga os passos abaixo para executar o projeto em seu ambiente local.
+
+Pré-requisitos
+Node.js (versão 18.x ou superior)
+
+npm ou Yarn
+
+Uma instância do PostgreSQL rodando.
+
+Instalação
+Clone o repositório:
+
+Bash
+
+git clone https://github.com/seu-usuario/jrs-invest.git
+cd jrs-invest
+
+Instale as dependências do Backend:
+
+Bash
+
+cd jrs-invest-backend
+npm install
+
+Instale as dependências do Frontend:
+
+Bash
+
+cd jrs-invest
+npm install
+Configuração do Ambiente:
+
+No diretório backend, renomeie o arquivo .env.example para .env.
+
+Preencha as variáveis de ambiente no arquivo .env com as suas credenciais do banco de dados e a chave secreta para o JWT.
+
+Snippet de código
+
+DATABASE_URL="postgresql://USUARIO:SENHA@HOST:PORTA/NOME_DO_BANCO"
+JWT_SECRET="SUA_CHAVE_SECRETA_AQUI"
+PORT=3001
+Rode as Migrações do Banco de Dados:
+
+Execute o script SQL fornecido no projeto para criar as tabelas users e operations.
+
+Execução
+Inicie o servidor Backend:
+
+Bash
+
+cd backend
+npm run dev
+O servidor estará rodando em http://localhost:3001.
+
+Inicie a aplicação Frontend:
+
+Bash
+
+cd frontend
+npm run dev
+A aplicação estará acessível em http://localhost:5173 (ou outra porta indicada pelo Vite).
+
+👤 Autor
+Sérgio Costa
+
+LinkedIn: https://www.linkedin.com/in/s%C3%A9rgio-costa-498a25278/
+
+GitHub: https://github.com/sergiocosta17
