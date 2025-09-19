@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
 import { PasswordInput } from '../../components/password-input/PasswordInput';
-import './login.css';
+import './Login.css';
 import JRSLogo from '../../assets/jrs-invest-logo-azul.svg';
 
 const LoginSchema = Yup.object().shape({
