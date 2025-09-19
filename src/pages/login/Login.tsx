@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import api from '../../services/api';
 import { PasswordInput } from '../../components/password-input/PasswordInput';
 import './Login.css';
-import JRSLogo from '../../assets/jrs-invest-logo-azul.svg';
+import JRSLogo from '../../assets/jrs-Invest-logo-azul.svg';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email('E-mail inválido').required('Obrigatório'),
