@@ -2,15 +2,6 @@
   display: flex;
   flex-direction: row;
   min-height: 100vh;
-  width: 100vw;
-  background-color: #f5f8fa;
-}
-
-.content {
-  flex: 1;
-  min-width: 0;
-  padding: 2rem;
-  overflow-y: auto;
 }
 
 .mainContent {
@@ -24,5 +15,6 @@
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
-  background-color: #f5f8fa;
+  overflow-x: hidden;
+  background-color: var(--page-bg);
 }
