@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import api from '../../services/api';
 import { PasswordInput } from '../../components/password-input/PasswordInput';
 import './login.css';
+import JRSLogo from '../../assets/jrs-invest-logo-azul.svg';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email('E-mail inválido').required('Obrigatório'),
@@ -16,8 +17,8 @@ export function Login() {
 
   return (
     <div className="login-wrapper">
-      <h2>JRS Invest</h2>
-      <h5>Plataforma de gerenciamento de investimentos</h5>
+      
+      <img src={JRSLogo} alt="JRS Invest Logo" className="login-logo" /> 
 
       <Formik
         initialValues={{ email: '', password: '' }}

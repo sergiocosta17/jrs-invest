@@ -6,22 +6,13 @@
   min-height: 100vh;
   padding: 2rem;
   background-color: var(--background-light);
+  gap: 0rem;
 }
 
-.login-wrapper h2 {
-  font-size: 2.5rem;
-  color: var(--primary-dark);
-  margin-bottom: 0.5rem;
-  font-weight: 700;
-  text-align: center;
-}
-
-.login-wrapper h5 {
-  font-size: 1.1rem;
-  color: var(--text-light);
-  margin-bottom: 2rem;
-  font-weight: 400;
-  text-align: center;
+.login-logo {
+  max-width: 300px;
+  height: auto;
+  margin-bottom: 0;
 }
 
 .login-form {
@@ -110,7 +101,7 @@
 }
 
 .register-link {
-  margin-top: 1.5rem;
+  margin-top: 0;
   font-size: 0.9rem;
   color: var(--text-light);
   text-align: center;
