@@ -29,7 +29,6 @@ export function Profile() {
       try {
         const response = await api.get('/api/profile');
         
-        // AJUSTE: Garantimos que os valores nulos se tornem strings vazias
         const profileData = {
           ...response.data,
           name: response.data.name || '',

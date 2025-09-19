@@ -1,5 +1,5 @@
 import styles from './Sidebar.module.css';
-import { Link, NavLink } from 'react-router-dom'; // 1. IMPORTE O 'Link'
+import { Link, NavLink } from 'react-router-dom';
 import { FiGrid, FiRepeat, FiFileText, FiBarChart2 } from 'react-icons/fi';
 import logoImage from '../../assets/jrs-invest-logo.svg';
 
@@ -7,7 +7,6 @@ export function Sidebar() {
   return (
     <aside className={styles.sidebar}>
       <div className={styles.logoContainer}>
-        {/* 2. ENVOLVA A IMAGEM COM O COMPONENTE <Link> */}
         <Link to="/dashboard">
           <img src={logoImage} alt="JRS Invest Logo" className={styles.logoImage} />
         </Link>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import api from '../../services/api'; // ALTERADO: Importa 'api' em vez de 'axios'
+import api from '../../services/api';
 import styles from './Relatorios.module.css';
 
 export function Relatorios() {
@@ -11,7 +11,6 @@ export function Relatorios() {
   const handleGenerateReport = async () => {
     setIsDownloading(true);
     try {
-      // ALTERADO: Usa 'api.get' e o caminho relativo
       const response = await api.get('/api/reports', {
         params: {
           format,
@@ -41,7 +40,6 @@ export function Relatorios() {
   };
 
   return (
-    // O JSX não muda, então o resto do arquivo continua igual
     <div className={styles.container}>
       <h1 className={styles.title}>Relatórios</h1>
       <p className={styles.subtitle}>Exporte o histórico de suas operações por período.</p>
