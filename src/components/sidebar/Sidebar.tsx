@@ -1,7 +1,7 @@
 import styles from './Sidebar.module.css';
 import { Link, NavLink } from 'react-router-dom';
 import { FiGrid, FiRepeat, FiFileText, FiBarChart2 } from 'react-icons/fi';
-import logoImage from '../../assets/jrs-invest-logo.svg';
+import logoImage from '../../assets/jrs-Invest-logo.svg';
 
 interface SidebarProps {
   isOpen: boolean;
