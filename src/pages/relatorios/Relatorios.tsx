@@ -1,10 +1,17 @@
 import { useState } from 'react';
 import api from '../../services/api';
 import styles from './Relatorios.module.css';
+import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 
 export function Relatorios() {
-  const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 10));
-  const [endDate, setEndDate] = useState(new Date().toISOString().slice(0, 10));
+  const today = new Date();
+  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
+    .toISOString()
+    .slice(0, 10);
+  
+  const [startDate, setStartDate] = useState(firstDayOfMonth);
+  const [endDate, setEndDate] = useState(today.toISOString().slice(0, 10));
   const [format, setFormat] = useState('pdf');
   const [isDownloading, setIsDownloading] = useState(false);
 
@@ -33,14 +40,14 @@ export function Relatorios() {
 
     } catch (error) {
       console.error("Erro ao gerar relatório:", error);
-      alert("Não foi possível gerar o relatório.");
+      toast.error("Não foi possível gerar o relatório.");
     } finally {
       setIsDownloading(false);
     }
   };
 
   return (
-    <div className={styles.container}>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className={styles.container}>
       <h1 className={styles.title}>Relatórios</h1>
       <p className={styles.subtitle}>Exporte o histórico de suas operações por período.</p>
 
@@ -88,6 +95,6 @@ export function Relatorios() {
           {isDownloading ? 'Gerando...' : 'Baixar Relatório'}
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 }

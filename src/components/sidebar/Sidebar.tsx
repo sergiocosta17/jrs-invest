@@ -3,29 +3,36 @@ import { Link, NavLink } from 'react-router-dom';
 import { FiGrid, FiRepeat, FiFileText, FiBarChart2 } from 'react-icons/fi';
 import logoImage from '../../assets/jrs-invest-logo.svg';
 
-export function Sidebar() {
+interface SidebarProps {
+  isOpen: boolean;
+  closeMenu: () => void;
+}
+
+export function Sidebar({ isOpen, closeMenu }: SidebarProps) {
+  const sidebarClasses = `${styles.sidebar} ${isOpen ? styles.sidebarOpen : ''}`;
+
   return (
-    <aside className={styles.sidebar}>
-      <div className={styles.logoContainer}>
-        <Link to="/dashboard">
+    <aside className={sidebarClasses}>
+      <Link to="/dashboard" onClick={closeMenu}>
+        <div className={styles.logoContainer}>
           <img src={logoImage} alt="JRS Invest Logo" className={styles.logoImage} />
-        </Link>
-      </div>
+        </div>
+      </Link>
       
       <nav className={styles.nav}>
-        <NavLink to="/dashboard" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
+        <NavLink to="/dashboard" onClick={closeMenu} className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
           <FiGrid size={20} />
           <span>Dashboard</span>
         </NavLink>
-        <NavLink to="/carteira" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
+        <NavLink to="/carteira" onClick={closeMenu} className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
           <FiBarChart2 size={20} />
           <span>Carteira</span>
         </NavLink>
-        <NavLink to="/operacoes" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
+        <NavLink to="/operacoes" onClick={closeMenu} className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
           <FiRepeat size={20} />
           <span>Operações</span>
         </NavLink>
-        <NavLink to="/relatorios" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
+        <NavLink to="/relatorios" onClick={closeMenu} className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
           <FiFileText size={20} />
           <span>Relatórios</span>
         </NavLink>

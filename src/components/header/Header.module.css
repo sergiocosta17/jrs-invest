@@ -43,3 +43,22 @@
 .logoutButton:hover {
   color: var(--danger);
 }
+
+.menuButton {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .header {
+    justify-content: space-between;
+  }
+  
+  .menuButton {
+    display: flex;
+    align-items: center;
+  }
+}

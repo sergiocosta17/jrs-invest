@@ -78,66 +78,72 @@ export function Operacoes() {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className={styles.container}
-    >
-      <header className={styles.header}>
-        <h1>Histórico de Operações</h1>
-        <button className={styles.newOperationButton} onClick={handleOpenCreateModal}>
-          <FiPlus size={20} />
-          Nova Operação
-        </button>
-      </header>
+    <>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className={styles.container}
+      >
+        <header className={styles.header}>
+          <h1>Histórico de Operações</h1>
+          <button className={styles.newOperationButtonDesktop} onClick={handleOpenCreateModal}>
+            <FiPlus size={20} />
+            Nova Operação
+          </button>
+        </header>
 
-      <div className={styles.contentCard}>
-        <h2>Últimas Operações</h2>
-        <p className={styles.subtitle}>Histórico completo de compras e vendas</p>
-        <table className={styles.operationsTable}>
-          <thead>
-            <tr>
-              <th>Data</th>
-              <th>Tipo</th>
-              <th>Ativo</th>
-              <th>Quantidade</th>
-              <th>Preço</th>
-              <th>Total</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {operations.map((op) => (
-              <tr key={op.id}>
-                <td>{new Date(op.date).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</td>
-                <td>
-                  <span className={`${styles.tag} ${op.type === 'Compra' ? styles.tagCompra : styles.tagVenda}`}>
-                    {op.type}
-                  </span>
-                </td>
-                <td>{op.asset}</td>
-                <td>{op.quantity}</td>
-                <td>{Number(op.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-                <td>{Number(op.total).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-                <td>
-                  <div className={styles.actions}>
-                    <button className={styles.actionButton} onClick={() => handleOpenEditModal(op)}>
-                      <FiEdit size={16} />
-                    </button>
-                    <button
-                      className={`${styles.actionButton} ${styles.deleteButton}`}
-                      onClick={() => handleDeleteOperation(String(op.id))}
-                    >
-                      <FiTrash2 size={16} />
-                    </button>
-                  </div>
-                </td>
+        <div className={styles.contentCard}>
+          <h2>Últimas Operações</h2>
+          <p className={styles.subtitle}>Histórico completo de compras e vendas</p>
+          <table className={styles.operationsTable}>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Tipo</th>
+                <th>Ativo</th>
+                <th>Quantidade</th>
+                <th>Preço</th>
+                <th>Total</th>
+                <th>Ações</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {operations.map((op) => (
+                <tr key={op.id}>
+                  <td data-label="Data">{new Date(op.date).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</td>
+                  <td data-label="Tipo">
+                    <span className={`${styles.tag} ${op.type === 'Compra' ? styles.tagCompra : styles.tagVenda}`}>
+                      {op.type}
+                    </span>
+                  </td>
+                  <td data-label="Ativo">{op.asset}</td>
+                  <td data-label="Quantidade">{op.quantity}</td>
+                  <td data-label="Preço">{Number(op.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                  <td data-label="Total">{Number(op.total).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                  <td data-label="Ações">
+                    <div className={styles.actions}>
+                      <button className={styles.actionButton} onClick={() => handleOpenEditModal(op)}>
+                        <FiEdit size={16} />
+                      </button>
+                      <button
+                        className={`${styles.actionButton} ${styles.deleteButton}`}
+                        onClick={() => handleDeleteOperation(String(op.id))}
+                      >
+                        <FiTrash2 size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </motion.div>
+
+      <button className={styles.newOperationButtonMobile} onClick={handleOpenCreateModal}>
+        <FiPlus size={24} />
+      </button>
 
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <AddOperationForm
@@ -146,6 +152,6 @@ export function Operacoes() {
           operationToEdit={editingOperation}
         />
       </Modal>
-    </motion.div>
+    </>
   );
 }
