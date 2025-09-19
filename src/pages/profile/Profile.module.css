@@ -1,6 +1,5 @@
 .container {
-  max-width: 800px;
-  margin: 0 auto;
+  width: 100%;
 }
 
 .title {
@@ -14,17 +13,39 @@
   font-size: 1rem;
 }
 
+.profileGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 992px) {
+  .profileGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 .formCard {
   background: var(--white);
   padding: 2.5rem;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.formCard h2 {
+  font-size: 1.25rem;
+  margin-top: 0;
+  margin-bottom: 2rem;
+  color: var(--text-primary);
 }
 
 .form {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  height: 100%;
 }
 
 .fieldGroup {
@@ -59,7 +80,7 @@
 }
 
 .submitButton {
-  padding: 0.8rem 1rem;
+  padding: 0.8rem 1.5rem;
   background-color: var(--brand-dark);
   color: var(--white);
   border: none;
@@ -67,10 +88,17 @@
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  margin-top: 1rem;
+  margin-top: auto;
   align-self: flex-start;
+  transition: background-color 0.2s;
 }
 
 .submitButton:disabled {
   background-color: #ccc;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-secondary);
 }

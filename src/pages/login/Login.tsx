@@ -1,4 +1,4 @@
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -20,7 +20,7 @@ export function Login() {
       <Formik
         initialValues={{ email: '', password: '' }}
         validationSchema={LoginSchema}
-        onSubmit={async (values, { setSubmitting, setStatus }) => {
+        onSubmit={async (values, { setSubmitting, setErrors }) => {
           try {
             const response = await api.post('/api/login', values);
             
@@ -30,17 +30,20 @@ export function Login() {
             navigate('/dashboard', { replace: true });
 
           } catch (error: any) {
-            const errorMessage = error.response?.data?.error || 'Não foi possível fazer login.';
-            setStatus(errorMessage);
-            toast.error(errorMessage);
+            console.error("Erro no login:", error);
+
+            if (error.response && error.response.data.errors) {
+              setErrors(error.response.data.errors);
+            } else {
+              toast.error('Não foi possível fazer login. Tente novamente.');
+            }
           } finally {
             setSubmitting(false);
           }
         }}
       >
-        {({ isSubmitting, errors, touched, status }) => (
+        {({ isSubmitting, errors, touched }) => (
           <Form className="login-form">
-            {status && <div className="login-error-message">{status}</div>}
             
             <label htmlFor="email" className="input-label">E-mail</label>
             <Field
@@ -50,6 +53,7 @@ export function Login() {
               placeholder="seu@email.com"
               className={`input-field ${errors.email && touched.email ? 'input-error' : ''}`}
             />
+            <ErrorMessage name="email" component="div" className="field-error-message" />
 
             <label htmlFor="password" className="input-label">Senha</label>
             <Field
@@ -59,6 +63,7 @@ export function Login() {
               placeholder="Sua senha"
               className={`input-field ${errors.password && touched.password ? 'input-error' : ''}`}
             />
+            <ErrorMessage name="password" component="div" className="field-error-message" />
 
             <button type="submit" className="login-button" disabled={isSubmitting}>
               {isSubmitting ? 'Entrando...' : 'Entrar'}

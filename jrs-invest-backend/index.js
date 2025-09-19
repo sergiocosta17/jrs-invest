@@ -56,21 +56,23 @@ app.post('/api/login', async (req, res) => {
   try {
     const userResult = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     if (userResult.rowCount === 0) {
-      return res.status(401).json({ error: 'Credenciais inválidas.' });
+      return res.status(401).json({
+        errors: { email: 'Nenhum usuário encontrado com este e-mail.' }
+      });
     }
     const user = userResult.rows[0];
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ error: 'Credenciais inválidas.' });
+      return res.status(401).json({
+        errors: { password: 'Senha incorreta.' }
+      });
     }
     const token = jwt.sign(
       { userId: user.id, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: '8h' }
     );
-    
     delete user.password;
-
     res.json({
       message: 'Login bem-sucedido!',
       token: token,
@@ -105,6 +107,32 @@ app.put('/api/profile', auth, async (req, res) => {
     res.json(updatedUser.rows[0]);
   } catch (err) {
     console.error("Erro ao atualizar perfil:", err);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+});
+
+app.put('/api/profile/change-password', auth, async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  const { userId } = req.user;
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ error: 'Todos os campos são obrigatórios.' });
+  }
+  try {
+    const userResult = await pool.query('SELECT password FROM users WHERE id = $1', [userId]);
+    if (userResult.rowCount === 0) {
+      return res.status(404).json({ error: 'Usuário não encontrado.' });
+    }
+    const user = userResult.rows[0];
+    const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isPasswordValid) {
+      return res.status(403).json({ error: 'A senha atual está incorreta.' });
+    }
+    const salt = await bcrypt.genSalt(10);
+    const hashedNewPassword = await bcrypt.hash(newPassword, salt);
+    await pool.query('UPDATE users SET password = $1 WHERE id = $2', [hashedNewPassword, userId]);
+    res.json({ message: 'Senha alterada com sucesso!' });
+  } catch (err) {
+    console.error("Erro ao alterar senha:", err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
@@ -203,7 +231,7 @@ app.get('/api/reports', auth, async (req, res) => {
   }
   try {
     const operationsResult = await pool.query(
-      'SELECT * FROM operations WHERE user_id = $1 AND date BETWEEN $2 AND $3 ORDER BY date ASC',
+      'SELECT id, date, type, asset, quantity, price, total FROM operations WHERE user_id = $1 AND date BETWEEN $2 AND $3 ORDER BY date ASC',
       [req.user.userId, startDate, endDate]
     );
     const operations = operationsResult.rows;

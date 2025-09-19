@@ -41,5 +41,5 @@
 }
 
 .logoutButton:hover {
-  color: var(--text-primary);
+  color: var(--danger);
 }

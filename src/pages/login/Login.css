@@ -92,3 +92,10 @@ body {
   margin-bottom: 1rem;
   text-align: center;
 }
+
+.field-error-message {
+  color: var(--danger);
+  font-size: 0.8rem;
+  margin-top: -0.75rem;
+  margin-bottom: 0.5rem;
+}
