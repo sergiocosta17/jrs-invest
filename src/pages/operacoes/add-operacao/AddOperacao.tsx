@@ -49,7 +49,7 @@ export function AddOperationForm({ onClose, onSave, operationToEdit }: AddOperat
           try {
             let savedOperation;
             if (operationToEdit) {
-              const response = await api.put(`/operations/${operationToEdit.id}`, values);
+              const response = await api.put(`/api/operations/${operationToEdit.id}`, values);
               savedOperation = response.data;
             } else {
               const response = await api.post('/api/operations', values);
