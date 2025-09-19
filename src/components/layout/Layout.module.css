@@ -2,15 +2,6 @@
   display: flex;
   flex-direction: row;
   min-height: 100vh;
-  width: 100vw;
-  background-color: #f5f8fa;
-}
-
-.content {
-  flex: 1;
-  min-width: 0;
-  padding: 2rem;
-  overflow-y: auto;
 }
 
 .mainContent {
@@ -24,5 +15,38 @@
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
-  background-color: #f5f8fa;
+  overflow-x: hidden;
+  background-color: var(--page-bg);
+}
+
+.overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mainContent {
+    width: 100%;
+  }
+
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+  
+  .overlay.hidden {
+    display: none;
+  }
+
+  .overlay.visible {
+    display: block;
+  }
+  
+  .content {
+    padding: 1.5rem;
+  }
 }
