@@ -103,8 +103,8 @@ Siga os passos abaixo para executar o projeto em seu ambiente local.
 
 ## 👤 Autor
 
-**[Seu Nome Completo]**
+-- @sgneto_
 
-* LinkedIn: [linkedin.com/in/seu-linkedin](https://linkedin.com/in/seu-linkedin)
-* GitHub: [@seu-usuario](https://github.com/seu-usuario)
-* Email: [seu-email@exemplo.com](mailto:seu-email@exemplo.com)
+* LinkedIn: (https://www.linkedin.com/in/s%C3%A9rgio-costa-498a25278/)
+* GitHub: (https://github.com/sergiocosta17)
+* Email: [sergiocostaaraujoneto@gmail.com)
