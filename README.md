@@ -88,7 +88,7 @@ Siga os passos abaixo para executar o projeto em seu ambiente local.
 
 1.  **Inicie o servidor Backend:**
     ```bash
-    # no diretório /backend
+    # no diretório /jrs-invest-backend
     npm run dev
     ```
 
