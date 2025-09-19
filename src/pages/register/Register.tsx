@@ -1,8 +1,9 @@
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import { useNavigate, Link } from 'react-router-dom';
+import { PasswordInput } from '../../components/password-input/PasswordInput';
 import styles from './Register.module.css';
 
 const RegisterSchema = Yup.object().shape({
@@ -29,12 +30,9 @@ export function Register() {
               email: values.email,
               password: values.password,
             });
-
             toast.success(response.data.message);
             navigate('/login');
-
           } catch (error: any) {
-            console.error("Erro no cadastro:", error);
             const errorMessage = error.response?.data?.error || 'Não foi possível criar a conta.';
             setStatus(errorMessage);
             toast.error(errorMessage);
@@ -56,23 +54,20 @@ export function Register() {
               className={`${styles.inputField} ${errors.email && touched.email ? styles.inputError : ''}`}
             />
 
-            <label htmlFor="password">Senha</label>
             <Field
-              id="password"
-              type="password"
               name="password"
+              label="Senha"
               placeholder="Mínimo 6 caracteres"
-              className={`${styles.inputField} ${errors.password && touched.password ? styles.inputError : ''}`}
+              component={PasswordInput}
             />
-
-            <label htmlFor="confirmPassword">Confirmar Senha</label>
+            
             <Field
-              id="confirmPassword"
-              type="password"
               name="confirmPassword"
+              label="Confirmar Senha"
               placeholder="Repita sua senha"
-              className={`${styles.inputField} ${errors.confirmPassword && touched.confirmPassword ? styles.inputError : ''}`}
+              component={PasswordInput}
             />
+            <ErrorMessage name="confirmPassword" component="div" className={styles.errorMessage} />
 
             <button type="submit" className={styles.registerButton} disabled={isSubmitting}>
               {isSubmitting ? 'Criando conta...' : 'Criar Conta'}

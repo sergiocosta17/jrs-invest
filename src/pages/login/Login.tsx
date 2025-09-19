@@ -3,6 +3,7 @@ import * as Yup from 'yup';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
+import { PasswordInput } from '../../components/password-input/PasswordInput';
 import './login.css';
 
 const LoginSchema = Yup.object().shape({
@@ -17,21 +18,17 @@ export function Login() {
     <div className="login-wrapper">
       <h2>JRS Invest</h2>
       <h5>Plataforma de gerenciamento de investimentos</h5>
+
       <Formik
         initialValues={{ email: '', password: '' }}
         validationSchema={LoginSchema}
         onSubmit={async (values, { setSubmitting, setErrors }) => {
           try {
             const response = await api.post('/api/login', values);
-            
             localStorage.setItem('authToken', response.data.token);
-
             toast.success('Login bem-sucedido!');
             navigate('/dashboard', { replace: true });
-
           } catch (error: any) {
-            console.error("Erro no login:", error);
-
             if (error.response && error.response.data.errors) {
               setErrors(error.response.data.errors);
             } else {
@@ -44,27 +41,28 @@ export function Login() {
       >
         {({ isSubmitting, errors, touched }) => (
           <Form className="login-form">
+            <div className="input-group">
+              <label htmlFor="email" className="input-label">E-mail</label>
+              <Field
+                id="email"
+                type="email"
+                name="email"
+                placeholder="seu@email.com"
+                className={`input-field ${errors.email && touched.email ? 'input-error' : ''}`}
+              />
+              <ErrorMessage name="email" component="div" className="field-error-message" />
+            </div>
+
+            <div className="input-group">
+              <Field
+                name="password"
+                label="Senha"
+                placeholder="Sua senha"
+                component={PasswordInput}
+              />
+              <ErrorMessage name="password" component="div" className="field-error-message" />
+            </div>
             
-            <label htmlFor="email" className="input-label">E-mail</label>
-            <Field
-              id="email"
-              type="email"
-              name="email"
-              placeholder="seu@email.com"
-              className={`input-field ${errors.email && touched.email ? 'input-error' : ''}`}
-            />
-            <ErrorMessage name="email" component="div" className="field-error-message" />
-
-            <label htmlFor="password" className="input-label">Senha</label>
-            <Field
-              id="password"
-              type="password"
-              name="password"
-              placeholder="Sua senha"
-              className={`input-field ${errors.password && touched.password ? 'input-error' : ''}`}
-            />
-            <ErrorMessage name="password" component="div" className="field-error-message" />
-
             <button type="submit" className="login-button" disabled={isSubmitting}>
               {isSubmitting ? 'Entrando...' : 'Entrar'}
             </button>

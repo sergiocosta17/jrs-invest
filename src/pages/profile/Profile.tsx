@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import toast from 'react-hot-toast';
 import styles from './Profile.module.css';
 import { motion } from 'framer-motion';
+import { PasswordInput } from '../../components/password-input/PasswordInput';
 
 interface UserProfile {
   name: string;
@@ -25,7 +26,7 @@ const PasswordSchema = Yup.object().shape({
   newPassword: Yup.string().min(6, 'A nova senha deve ter no mínimo 6 caracteres').required('Obrigatório'),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref('newPassword')], 'As senhas devem ser iguais')
-    .required('Obrigatório'),
+    .required(''),
 });
 
 export function Profile() {
@@ -121,11 +122,12 @@ export function Profile() {
               }
             }}
           >
-            {({ isSubmitting, errors, touched }) => (
+            {({ isSubmitting }) => (
               <Form className={styles.form}>
-                <div className={styles.fieldGroup}><label>Senha Atual</label><Field name="currentPassword" type="password" className={`${styles.input} ${errors.currentPassword && touched.currentPassword ? styles.inputError : ''}`} /></div>
-                <div className={styles.fieldGroup}><label>Nova Senha</label><Field name="newPassword" type="password" className={`${styles.input} ${errors.newPassword && touched.newPassword ? styles.inputError : ''}`} /></div>
-                <div className={styles.fieldGroup}><label>Confirmar Nova Senha</label><Field name="confirmPassword" type="password" className={`${styles.input} ${errors.confirmPassword && touched.confirmPassword ? styles.inputError : ''}`} /></div>
+                <Field name="currentPassword" label="Senha Atual" component={PasswordInput} />
+                <Field name="newPassword" label="Nova Senha" component={PasswordInput} />
+                <Field name="confirmPassword" label="Confirmar Nova Senha" component={PasswordInput} />
+                <ErrorMessage name="confirmPassword" component="div" className={styles.errorMessage} />
                 <button type="submit" className={styles.submitButton} disabled={isSubmitting}>{isSubmitting ? 'Salvando...' : 'Alterar Senha'}</button>
               </Form>
             )}
