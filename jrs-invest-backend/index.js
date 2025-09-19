@@ -18,8 +18,11 @@ const CACHE_DURATION_MS = 5 * 60 * 1000;
 app.use(cors());
 app.use(express.json());
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL
+  connectionString: process.env.DATABASE_URL,
+  ssl: isProduction ? { rejectUnauthorized: false } : false
 });
 
 app.post('/api/register', async (req, res) => {
