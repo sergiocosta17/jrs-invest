@@ -106,7 +106,7 @@ export function Carteira() {
                 <th>Quantidade</th>
                 <th>Preço Médio</th>
                 <th>Preço Atual</th>
-                <th>Variação</th>
+                <th>Variação Diária</th>
                 <th>Total Investido</th>
                 <th>Valor Atual</th>
                 <th>Resultado</th>

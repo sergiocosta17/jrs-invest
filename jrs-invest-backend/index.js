@@ -2,12 +2,12 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
-const axios = require('axios');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const csv = require('fast-csv');
 const PDFDocument = require('pdfkit');
 const auth = require('./middleware/auth');
+const yahooFinance = require('yahoo-finance2').default;
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -273,57 +273,170 @@ app.get('/api/reports', auth, async (req, res) => {
 
 app.get('/api/chart/:ticker', auth, async (req, res) => {
   const { ticker } = req.params;
-  const token = process.env.BRAPI_API_TOKEN;
-  const cacheKey = `chart-${ticker}`;
+  const cacheKey = `chart-yahoo-${ticker}`;
+
   if (quotesCache[cacheKey] && (Date.now() - quotesCache[cacheKey].timestamp < 60 * 60 * 1000)) {
-    return res.json(quotesCache[cacheKey].data);
+      return res.json(quotesCache[cacheKey].data);
   }
-  const apiUrl = `https://brapi.dev/api/quote/${ticker}?range=3mo&interval=1d&token=${token}`;
+
+  let yahooTicker = ticker.toUpperCase();
+  if (!yahooTicker.startsWith('^') && !yahooTicker.endsWith('.SA')) {
+    yahooTicker = `${yahooTicker}.SA`;
+  }
+
   try {
-    const response = await axios.get(apiUrl);
-    const chartData = response.data.results[0];
-    if (chartData) {
-      quotesCache[cacheKey] = {
-        timestamp: Date.now(),
-        data: chartData
+      const [historicalData, quoteData] = await Promise.all([
+          yahooFinance.historical(yahooTicker, { period1: new Date(new Date().setMonth(new Date().getMonth() - 3)), interval: '1d' }),
+          yahooFinance.quote(yahooTicker)
+      ]);
+      
+      const formattedResult = {
+          symbol: ticker.toUpperCase(),
+          regularMarketPrice: quoteData.regularMarketPrice || 0,
+          regularMarketChange: quoteData.regularMarketChange || 0,
+          historicalDataPrice: historicalData.map(data => ({
+              date: Math.floor(new Date(data.date).getTime() / 1000),
+              open: data.open,
+              high: data.high,
+              low: data.low,
+              close: data.close,
+              volume: data.volume,
+          }))
       };
-      res.json(chartData);
-    } else {
-      res.status(404).json({ error: 'Dados para o ticker não encontrados.' });
-    }
+
+      quotesCache[cacheKey] = {
+          timestamp: Date.now(),
+          data: formattedResult
+      };
+      res.json(formattedResult);
+
   } catch (err) {
-    res.status(500).json({ error: 'Não foi possível buscar os dados do gráfico.' });
+      console.warn(`Aviso: Dados do gráfico não encontrados para o ticker "${ticker}". Retornando dados vazios. Erro: ${err.message}`);
+      res.json({
+          symbol: ticker.toUpperCase(),
+          regularMarketPrice: 0,
+          regularMarketChange: 0,
+          historicalDataPrice: []
+      });
   }
 });
 
 app.get('/api/quotes/:tickers', auth, async (req, res) => {
   const { tickers } = req.params;
-  const token = process.env.BRAPI_API_TOKEN;
-  const canonicalKey = tickers.split(',').sort().join(',');
+  if (!tickers || tickers.trim() === '') {
+    return res.json([]);
+  }
+
+  const tickerList = tickers.split(',');
+  const canonicalKey = `quotes-yahoo-${tickerList.sort().join(',')}`;
+
   if (quotesCache[canonicalKey] && (Date.now() - quotesCache[canonicalKey].timestamp < CACHE_DURATION_MS)) {
     return res.json(quotesCache[canonicalKey].data);
   }
-  if (!tickers) {
-    return res.status(400).json({ error: 'Nenhum ticker fornecido' });
-  }
-  const apiUrl = `https://brapi.dev/api/quote/${tickers}?token=${token}`;
-  try {
-    const response = await axios.get(apiUrl);
-    if (response.data && response.data.results) {
-      const responseData = response.data.results;
-      quotesCache[canonicalKey] = {
-        timestamp: Date.now(),
-        data: responseData
-      };
-      res.json(responseData);
-    } else {
-      res.status(404).json({ error: 'Ativos não encontrados ou erro na API externa.' });
+
+  const yahooTickerList = tickerList.map(t => {
+    const upperT = t.toUpperCase();
+    if (!upperT.startsWith('^') && !upperT.endsWith('.SA')) {
+      return `${upperT}.SA`;
     }
+    return upperT;
+  });
+
+  try {
+    const results = await yahooFinance.quote(yahooTickerList);
+    
+    const resultsMap = new Map();
+    if (Array.isArray(results)) {
+      results.forEach(r => r && r.symbol && resultsMap.set(r.symbol, r));
+    } else if (results && results.symbol) {
+      resultsMap.set(results.symbol, results);
+    }
+
+    const finalResults = yahooTickerList.map(yahooTicker => {
+      const originalTicker = yahooTicker.replace('.SA', '');
+      const quote = resultsMap.get(yahooTicker);
+
+      if (quote && quote.regularMarketPrice != null) {
+        return {
+          symbol: originalTicker,
+          shortName: quote.shortName || '',
+          longName: quote.longName || '',
+          regularMarketPrice: quote.regularMarketPrice || 0,
+          regularMarketChange: quote.regularMarketChange || 0,
+          regularMarketChangePercent: quote.regularMarketChangePercent || 0,
+          regularMarketTime: quote.regularMarketTime || new Date(),
+        };
+      }
+      
+      console.warn(`Aviso: Cotação não encontrada para o ticker "${originalTicker}". Retornando dados padrão.`);
+      return {
+        symbol: originalTicker,
+        shortName: `${originalTicker} (Inválido)`,
+        longName: 'Ativo não encontrado',
+        regularMarketPrice: 0,
+        regularMarketChange: 0,
+        regularMarketChangePercent: 0,
+        regularMarketTime: new Date(),
+      };
+    });
+
+    quotesCache[canonicalKey] = {
+      timestamp: Date.now(),
+      data: finalResults
+    };
+    res.json(finalResults);
+    
   } catch (err) {
-    console.error('Erro ao buscar dados da Brapi:', err.message);
-    res.status(500).json({ error: 'Não foi possível buscar as cotações' });
+    console.error(`Erro ao buscar dados do Yahoo Finance para: "${tickers}"`, err);
+    const errorResults = tickerList.map(originalTicker => ({
+      symbol: originalTicker.toUpperCase(),
+      shortName: `${originalTicker.toUpperCase()} (Erro)`,
+      longName: 'Erro ao buscar dados',
+      regularMarketPrice: 0,
+      regularMarketChange: 0,
+      regularMarketChangePercent: 0,
+      regularMarketTime: new Date(),
+    }));
+    res.json(errorResults);
   }
 });
+
+app.get('/api/search/stocks', auth, async (req, res) => {
+  const { q } = req.query; 
+  if (!q) {
+    return res.status(400).json({ error: 'Um termo de busca é obrigatório.' });
+  }
+
+  const searchTerm = q.toUpperCase();
+  const cacheKey = `search-yahoo-${searchTerm}`;
+  
+  if (quotesCache[cacheKey] && (Date.now() - quotesCache[cacheKey].timestamp < CACHE_DURATION_MS)) {
+    return res.json(quotesCache[cacheKey].data);
+  }
+
+  try {
+    const response = await yahooFinance.search(searchTerm);
+
+    const searchData = response.quotes.map(item => ({
+      stock: item.symbol,
+      name: item.longname || item.shortname,
+    })).filter(item => 
+      item.stock.includes('.SA')
+    );
+
+    quotesCache[cacheKey] = {
+      timestamp: Date.now(),
+      data: searchData
+    };
+      
+    res.json(searchData);
+
+  } catch (err) {
+    console.error(`Erro na busca do Yahoo Finance para "${searchTerm}":`, err);
+    res.status(500).json({ error: 'Não foi possível realizar a busca pelas ações.' });
+  }
+});
+
 
 app.listen(port, () => {
   console.log(`Servidor back-end rodando em http://localhost:${port}`);
