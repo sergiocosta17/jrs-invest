@@ -1,0 +1,130 @@
+.container {
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  font-size: 2rem;
+  color: var(--text-primary);
+}
+
+.addButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--brand-dark);
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.addButton:hover {
+  background-color: var(--brand-dark-hover);
+}
+
+.contentCard {
+  background-color: var(--white);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-color);
+}
+
+.contentCard h2 {
+  font-size: 1.25rem;
+  margin-top: 0;
+  color: var(--text-primary);
+}
+
+.subtitle {
+  color: var(--text-light);
+  margin-top: 0;
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.assetsTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.assetsTable th,
+.assetsTable td {
+  padding: 1rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.assetsTable th {
+  color: var(--text-light);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.assetsTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.assetName {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.tag {
+  padding: 0.25rem 0.6rem;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--white);
+  min-width: 60px;
+  text-align: center;
+  display: inline-block;
+}
+
+.tagPositive {
+  background-color: var(--success);
+}
+
+.tagNegative {
+  background-color: var(--danger);
+}
+
+.positive {
+  color: var(--success);
+}
+
+.negative {
+  color: var(--danger);
+}
+
+.positive span,
+.negative span {
+  display: block;
+  font-size: 0.8rem;
+  margin-top: 0.1rem;
+}
+
+.centeredMessage {
+  padding: 3rem;
+  text-align: center;
+  color: var(--text-light);
+}

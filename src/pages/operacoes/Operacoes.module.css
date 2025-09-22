@@ -1,14 +1,5 @@
 .container {
-  --primary-text: #1a222e;
-  --secondary-text: #888;
-  --brand-color: #1a222e;
-  --brand-color-hover: #344054;
-  --border-color: #e0e6ed;
-  --card-bg: #fff;
-  --tag-bg-compra: #1a222e;
-  --tag-bg-venda: #667085;
-  --tag-text: #fff;
-  --danger-hover-color: #e53e3e;
+  width: 100%;
 }
 
 .header {
@@ -23,13 +14,13 @@
   color: var(--primary-text);
 }
 
-.newOperationButton {
+.newOperationButtonDesktop {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  background-color: var(--brand-color);
-  color: #fff;
+  background-color: var(--brand-dark);
+  color: var(--white);
   border: none;
   border-radius: 8px;
   font-size: 1rem;
@@ -38,12 +29,16 @@
   transition: background-color 0.2s;
 }
 
-.newOperationButton:hover {
-  background-color: var(--brand-color-hover);
+.newOperationButtonDesktop:hover {
+  background-color: var(--brand-dark-hover);
+}
+
+.newOperationButtonMobile {
+  display: none;
 }
 
 .contentCard {
-  background-color: var(--card-bg);
+  background-color: var(--white);
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -57,7 +52,7 @@
 }
 
 .subtitle {
-  color: var(--secondary-text);
+  color: var(--text-secondary);
   margin-top: 0;
   margin-bottom: 2rem;
   font-size: 0.9rem;
@@ -71,21 +66,20 @@
 .operationsTable th,
 .operationsTable td {
   padding: 1rem;
-  text-align: left;
+  text-align: center;
   border-bottom: 1px solid var(--border-color);
   vertical-align: middle;
+  white-space: nowrap;
 }
 
 .operationsTable th {
-  color: var(--secondary-text);
+  color: var(--text-light);
   font-size: 0.8rem;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
-.operationsTable td {
-  color: var(--primary-text);
-  font-size: 0.9rem;
+.operationsTable tbody tr:last-child td {
+  border-bottom: none;
 }
 
 .tag {
@@ -100,11 +94,13 @@
 }
 
 .tagCompra {
-  background-color: var(--tag-bg-compra);
+  background-color: var(--brand-dark);
+  color: var(--white);
 }
 
 .tagVenda {
-  background-color: var(--tag-bg-venda);
+  background-color: var(--text-secondary);
+  color: var(--white);
 }
 
 .actions {
@@ -119,7 +115,7 @@
   border: none;
   padding: 0.25rem;
   cursor: pointer;
-  color: var(--secondary-text);
+  color: var(--text-light);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -133,12 +129,109 @@
 }
 
 .deleteButton:hover {
-  color: var(--danger-hover-color);
+  color: var(--danger);
 }
-
 
 .operationsTable th:last-child,
 .operationsTable td:last-child {
   width: 100px;
   text-align: center;
+}
+
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 1.5rem;
+  }
+
+  .newOperationButtonDesktop {
+    display: none;
+  }
+
+  .newOperationButtonMobile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    bottom: 2rem;
+    right: 1.5rem;
+    width: 56px;
+    height: 56px;
+    background-color: var(--brand-dark);
+    color: var(--white);
+    border-radius: 50%;
+    border: none;
+    box-shadow: var(--shadow-lg);
+    z-index: 500;
+  }
+
+  .contentCard {
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+  }
+
+  .contentCard h2, .contentCard .subtitle {
+    padding: 0 1rem;
+  }
+
+  .operationsTable thead {
+    display: none;
+  }
+
+  .operationsTable, 
+  .operationsTable tbody, 
+  .operationsTable tr, 
+  .operationsTable td {
+    display: block;
+    width: 100%;
+  }
+
+  .operationsTable tr {
+    margin-bottom: 1rem;
+    border-radius: 12px;
+    padding: 1rem;
+    background-color: var(--white);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
+  }
+
+  .operationsTable td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: right;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+    white-space: normal;
+  }
+  
+  .operationsTable td:last-child {
+    border-bottom: none;
+    padding-top: 1rem;
+  }
+
+  .operationsTable td::before {
+    content: attr(data-label);
+    font-weight: 500;
+    text-align: left;
+    margin-right: 1rem;
+    color: var(--text-secondary);
+  }
+
+  .operationsTable td .actions {
+    justify-content: flex-end;
+    gap: 1rem;
+  }
+
+  .operationsTable td[data-label="Ativo"] {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-text);
+    padding-bottom: 1rem;
+  }
+
+  .operationsTable td[data-label="Ativo"]::before {
+    display: none;
+  }
 }

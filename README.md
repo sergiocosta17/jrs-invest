@@ -1,69 +1,110 @@
-# React + TypeScript + Vite
+# JRS Invest: Plataforma de Gerenciamento de Investimentos
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[![Licença](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![React](https://img.shields.io/badge/React-18.2.0-blue?logo=react)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-4.9.5-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-18.17.0-green?logo=node.js)](https://nodejs.org/)
 
-Currently, two official plugins are available:
+## 📖 Sobre o Projeto
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+JRS Invest é uma aplicação web completa e intuitiva, desenhada para auxiliar investidores a consolidar e monitorar suas carteiras de ativos de forma eficiente. A plataforma oferece uma visão clara e detalhada sobre o desempenho dos investimentos, permitindo que os usuários tomem decisões mais informadas e estratégicas.
 
-## Expanding the ESLint configuration
+Com uma interface moderna e responsiva, o usuário pode cadastrar suas operações de compra e venda de ativos, visualizar a rentabilidade da carteira em tempo real e acompanhar a evolução de indicadores importantes do mercado.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## ✨ Funcionalidades Principais
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+* **Dashboard Analítico:** Visão consolidada da performance da carteira com indicadores chave e gráficos interativos.
+* **Gestão de Carteira Detalhada:** Visualize todos os seus ativos em um só lugar, com informações como quantidade, preço médio e cotação atual.
+* **Registro de Operações:** Adicione, edite e remova operações de compra e venda de ativos de forma simples.
+* **Autenticação Segura:** Sistema de login e registro de usuários com autenticação baseada em tokens (JWT) para garantir a privacidade dos dados.
+* **Perfil de Usuário:** Página dedicada para os usuários gerenciarem suas informações pessoais.
+* **Design Responsivo:** Interface adaptável para uma ótima experiência em desktops, tablets e celulares.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🚀 Tecnologias Utilizadas
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Este projeto foi construído utilizando as seguintes tecnologias:
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+**Frontend:**
+* **React**
+* **TypeScript**
+* **Vite**
+* **Axios**
+* **Recharts** (para gráficos)
+* **React Router DOM**
+
+**Backend:**
+* **Node.js**
+* **Express.js**
+* **PostgreSQL**
+* **JWT (JSON Web Tokens)**
+* **Bcrypt.js**
+
+---
+
+## 🛠️ Como Executar o Projeto
+
+Siga os passos abaixo para executar o projeto em seu ambiente local.
+
+### Pré-requisitos
+
+* Node.js (versão 18.x ou superior)
+* npm ou Yarn
+* Uma instância do PostgreSQL rodando.
+
+### Instalação
+
+1.  **Clone o repositório:**
+    ```bash
+    git clone [https://github.com/seu-usuario/jrs-invest.git](https://github.com/seu-usuario/jrs-invest.git)
+    cd jrs-invest
+    ```
+
+2.  **Instale as dependências do Backend:**
+    ```bash
+    cd backend
+    npm install
+    ```
+
+3.  **Instale as dependências do Frontend:**
+    ```bash
+    cd ../frontend
+    npm install
+    ```
+
+4.  **Configuração do Ambiente:**
+    * No diretório `backend`, renomeie o arquivo `.env.example` para `.env`.
+    * Preencha as variáveis de ambiente no arquivo `.env` com as suas credenciais do banco de dados e a chave secreta para o JWT.
+    ```env
+    DATABASE_URL="postgresql://USUARIO:SENHA@HOST:PORTA/NOME_DO_BANCO"
+    JWT_SECRET="SUA_CHAVE_SECRETA_AQUI"
+    PORT=3001
+    ```
+
+### Execução
+
+1.  **Inicie o servidor Backend:**
+    ```bash
+    # no diretório /jrs-invest-backend
+    npm run dev
+    ```
+
+2.  **Inicie a aplicação Frontend:**
+    ```bash
+    # no diretório /frontend
+    npm run dev
+    ```
+    Acesse `http://localhost:5173` (ou a porta indicada no terminal) no seu navegador.
+
+---
+
+## 👤 Autor
+
+-- @sgneto_
+
+* LinkedIn: (https://www.linkedin.com/in/s%C3%A9rgio-costa-498a25278/)
+* GitHub: (https://github.com/sergiocosta17)
+* Email: [sergiocostaaraujoneto@gmail.com)
