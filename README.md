@@ -65,13 +65,13 @@ Siga os passos abaixo para executar o projeto em seu ambiente local.
 
 2.  **Instale as dependências do Backend:**
     ```bash
-    cd backend
+    cd jrs-invest-backend
     npm install
     ```
 
 3.  **Instale as dependências do Frontend:**
     ```bash
-    cd ../frontend
+    cd jrs-invest(raiz)
     npm install
     ```
 
@@ -89,12 +89,12 @@ Siga os passos abaixo para executar o projeto em seu ambiente local.
 1.  **Inicie o servidor Backend:**
     ```bash
     # no diretório /jrs-invest-backend
-    npm run dev
+    node index.js
     ```
 
 2.  **Inicie a aplicação Frontend:**
     ```bash
-    # no diretório /frontend
+    # no diretório /jrs-invest(raiz do projeto)
     npm run dev
     ```
     Acesse `http://localhost:5173` (ou a porta indicada no terminal) no seu navegador.
