@@ -52,7 +52,7 @@ Siga os passos abaixo para executar o projeto em seu ambiente local.
 ### Pré-requisitos
 
 * Node.js (versão 18.x ou superior)
-* npm ou Yarn
+* npm
 * Uma instância do PostgreSQL rodando.
 
 ### Instalação
