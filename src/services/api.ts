@@ -2,7 +2,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 
 const api = axios.create({
-  baseURL: 'https://jrs-invest-backend.onrender.com',
+  baseURL: 'http://localhost:3001',
 });
 
 api.interceptors.request.use(async (config) => {
