@@ -10,6 +10,7 @@ import { Carteira } from './pages/carteira/Carteira';
 import { Relatorios } from './pages/relatorios/Relatorios';
 import { ProtectedRoute } from './components/protected-route/ProtectedRoute';
 import { Profile } from './pages/profile/Profile';
+import { Home } from './pages/home/Home';
 
 function App() {
   return (
@@ -20,13 +21,13 @@ function App() {
         toastOptions={{
           success: {
             style: {
-              background: '#00a23b',
+              background: '#00C48C',
               color: 'white',
             },
           },
           error: {
             style: {
-              background: '#f44336',
+              background: '#FF3B30',
               color: 'white',
             },
           },
@@ -34,18 +35,22 @@ function App() {
       />
       <Router>
         <Routes>
+          <Route path="/" element={<Home />} />
+
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-        <Route element={<ProtectedRoute />}></Route>
-          <Route element={<Layout />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/operacoes" element={<Operacoes />} />
-            <Route path="/carteira" element={<Carteira />} />
-            <Route path="/relatorios" element={<Relatorios />} />
-            <Route path="/perfil" element={<Profile />} />
+
+          <Route element={<ProtectedRoute />}>
+            <Route element={<Layout />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/operacoes" element={<Operacoes />} />
+              <Route path="/carteira" element={<Carteira />} />
+              <Route path="/relatorios" element={<Relatorios />} />
+              <Route path="/perfil" element={<Profile />} />
+            </Route>
           </Route>
 
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
     </>
