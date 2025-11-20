@@ -143,9 +143,28 @@
     font-size: 1.5rem;
   }
 
-  .newOperationButtonDesktop {
-    display: none;
-  }
+  /* ... */
+.newOperationButtonDesktop {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.5rem;
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius-pill);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 86, 255, 0.25);
+}
+
+.newOperationButtonDesktop:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 86, 255, 0.35);
+}
 
   .newOperationButtonMobile {
     display: flex;
