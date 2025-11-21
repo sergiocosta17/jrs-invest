@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Toaster } from 'react-hot-toast';
 import { Login } from './pages/login/Login';
 import { Register } from './pages/register/Register';
+import { ForgotPassword } from './pages/forgot-password/ForgotPassword';
 import { Dashboard } from './pages/dashboard/Dashboard';
 import { Layout } from './components/layout/Layout';
 import { Operacoes } from './pages/operacoes/Operacoes';
@@ -36,9 +37,9 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
-
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
 
           <Route element={<ProtectedRoute />}>
             <Route element={<Layout />}>

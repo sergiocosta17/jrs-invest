@@ -1,87 +1,248 @@
-.registerWrapper {
+.page {  height: 100vh;
+  width: 100vw;
+  background-color: #fff;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+.container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.banner {
+  flex: 1;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
   display: flex;
   flex-direction: column;
-  align-items: center;
+  justify-content: space-between;
+  padding: 4rem;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.banner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+  z-index: 0;
+}
+
+.bannerContent {
+  position: relative;
+  z-index: 1;
+  max-width: 480px;
+}
+
+.bannerLogo {
+  width: 60px;
+  height: auto;
+  margin-bottom: 3rem;
+  filter: brightness(0) invert(1);
+}
+
+.banner h1 {
+  font-size: 3.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  color: white;
+  letter-spacing: -0.03em;
+}
+
+.banner p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 400px;
+}
+
+.bannerFooter {
+  position: relative;
+  z-index: 1;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.formWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
-  min-height: 100vh;
-  background-color: var(--brand-light-gray);
-  text-align: center;
+  align-items: center;
+  padding: 2rem;
+  background-color: var(--background-card);
+  max-width: 600px;
+  width: 100%;
+  overflow-y: auto;
 }
 
-.registerWrapper h2 {
-  font-size: 2rem;
-  color: var(--text-primary);
-}
-
-.registerWrapper p {
-  color: var(--text-secondary);
+.formHeader {
+  width: 100%;
+  max-width: 400px;
   margin-bottom: 2rem;
 }
 
-.registerForm {
-  background-color: var(--white);
-  padding: 2.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+.formHeader h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--brand-black);
+  margin-bottom: 0.5rem;
+}
+
+.formHeader p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.form {
   width: 100%;
   max-width: 400px;
   display: flex;
   flex-direction: column;
-  text-align: left;
+  gap: 1.25rem;
 }
 
-.registerForm label {
-  margin-bottom: 0.5rem;
-  font-weight: 500;
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formGroup label {
   font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--brand-black);
+}
+
+.inputWithIcon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 1rem;
+  color: var(--text-light);
+  font-size: 1.2rem;
+  pointer-events: none;
+  z-index: 10;
 }
 
 .inputField {
-  padding: 0.8rem 1rem;
-  margin-bottom: 1rem;
+  width: 100%;
+  padding: 0.9rem 1rem 0.9rem 3rem;
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 1rem;
+  color: var(--brand-black);
+  background-color: var(--background-light);
+  transition: all 0.2s ease;
+}
+
+.inputField:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  background-color: white;
+  box-shadow: 0 0 0 4px rgba(0, 86, 255, 0.1);
+}
+
+.inputWrapperCustom :global(input) {
+  background-color: var(--background-light);
+}
+.inputWrapperCustom :global(input:focus) {
+  background-color: white;
 }
 
 .inputError {
-  border-color: var(--danger);
-}
-
-.registerButton {
-  padding: 0.8rem 1rem;
-  background-color: var(--brand-dark);
-  color: var(--white);
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  margin-top: 1rem;
-  transition: background-color 0.2s;
-}
-
-.registerButton:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.loginLink {
-  margin-top: 1.5rem;
-  color: var(--text-secondary);
-}
-
-.loginLink a {
-  color: var(--brand-dark);
-  font-weight: 500;
-  text-decoration: none;
+  border-color: var(--danger) !important;
+  background-color: #FFF5F5 !important;
 }
 
 .errorMessage {
-  background-color: #f8d7da;
-  color: #721c24;
+  color: var(--danger);
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+.errorAlert {
+  background-color: #FEF2F2;
+  color: #991B1B;
   padding: 0.75rem;
   border-radius: 8px;
   margin-bottom: 1rem;
+  font-size: 0.9rem;
+  border: 1px solid #FCA5A5;
   text-align: center;
+}
+
+.registerButton {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: var(--primary-color);
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 86, 255, 0.25);
+  border: none;
+  cursor: pointer;
+}
+
+.registerButton:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 86, 255, 0.35);
+}
+
+.registerButton:disabled {
+  background-color: #E5E7EB;
+  color: #9CA3AF;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.loginLink {
+  margin-top: 2rem;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.loginLink a {
+  color: var(--primary-color);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.loginLink a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .banner {
+    display: none;
+  }
+
+  .formWrapper {
+    max-width: 100%;
+    padding: 1.5rem;
+  }
 }
