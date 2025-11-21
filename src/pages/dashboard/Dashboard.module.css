@@ -13,16 +13,16 @@
 
 .cardContainer {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
 }
 
 .card {
-  background: var(--white);
+  background: var(--background-card);
   padding: 2rem;
   border-radius: 20px;
   box-shadow: var(--shadow-sm);
-  border: 1px solid transparent;
+  border: 1px solid var(--border-color);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -44,14 +44,14 @@
 }
 
 .card header span {
-    background: #F3F4F6;
+    background: var(--background-light);
     width: 32px;
     height: 32px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--brand-black);
+    color: var(--text-primary);
 }
 
 .card strong {
@@ -60,7 +60,7 @@
   font-size: 2.5rem;
   font-weight: 700;
   line-height: 1.1;
-  color: var(--brand-black);
+  color: var(--text-primary);
   letter-spacing: -0.03em;
 }
 
@@ -79,18 +79,36 @@
   color: var(--danger) !important;
 }
 
+.centeredMessage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+}
+
 .chartCard {
-  background: var(--white);
+  background: var(--background-card);
   border-radius: 24px;
   padding: 2.5rem;
   margin-top: 2.5rem;
   box-shadow: var(--shadow-sm);
-  border: 1px solid rgba(0,0,0,0.03);
+  border: 1px solid var(--border-color);
+}
+
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
 }
 
 .chartHeader h2 {
   font-size: 1.5rem;
   font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
 }
 
 .chartHeader p {
@@ -109,6 +127,7 @@
   display: block;
   font-size: 1.25rem;
   font-weight: 600;
+  color: var(--text-primary);
 }
 
 .chartStats span {
@@ -118,5 +137,46 @@
 
 .chartWrapper {
   width: 100%;
-  height: 300px;
+  height: 350px; 
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .cardContainer {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .card {
+    padding: 1.5rem;
+  }
+
+  .card strong {
+    font-size: 2rem;
+  }
+
+  .chartCard {
+    padding: 1.5rem;
+  }
+
+  .chartHeader {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .chartStats {
+    width: 100%;
+    justify-content: space-between;
+    gap: 1rem;
+    text-align: left;
+  }
+
+  .chartWrapper {
+    height: 250px;
+    margin-left: -10px; 
+  }
 }

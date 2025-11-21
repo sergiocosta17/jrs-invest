@@ -1,7 +1,9 @@
 import styles from './Sidebar.module.css';
 import { Link, NavLink } from 'react-router-dom';
 import { FiGrid, FiRepeat, FiFileText, FiBarChart2 } from 'react-icons/fi';
-import logoImage from '../../assets/jrs-Invest-logo.svg';
+import { useTheme } from '../../context/ThemeContext';
+import logoDark from '../../assets/jrs-Invest-logo.svg';
+import logoLight from '../../assets/jrs-Invest-logo-azul.svg';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -9,13 +11,16 @@ interface SidebarProps {
 }
 
 export function Sidebar({ isOpen, closeMenu }: SidebarProps) {
+  const { theme } = useTheme();
   const sidebarClasses = `${styles.sidebar} ${isOpen ? styles.sidebarOpen : ''}`;
+  
+  const currentLogo = theme === 'dark' ? logoDark : logoLight;
 
   return (
     <aside className={sidebarClasses}>
       <Link to="/dashboard" onClick={closeMenu}>
         <div className={styles.logoContainer}>
-          <img src={logoImage} alt="JRS Invest Logo" className={styles.logoImage} />
+          <img src={currentLogo} alt="JRS Invest Logo" className={styles.logoImage} />
         </div>
       </Link>
       

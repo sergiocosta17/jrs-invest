@@ -1,5 +1,7 @@
 .container {
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .header {
@@ -12,46 +14,30 @@
 .header h1 {
   font-size: 2rem;
   color: var(--text-primary);
-}
-
-.addButton {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background-color: var(--brand-dark);
-  color: var(--white);
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.addButton:hover {
-  background-color: var(--brand-dark-hover);
+  margin: 0;
 }
 
 .contentCard {
-  background-color: var(--white);
+  background-color: var(--background-card);
   padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
   border: 1px solid var(--border-color);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .contentCard h2 {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   margin-top: 0;
   color: var(--text-primary);
+  margin-bottom: 0.5rem;
 }
 
 .subtitle {
-  color: var(--text-light);
+  color: var(--text-secondary);
   margin-top: 0;
   margin-bottom: 2rem;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
 .tableWrapper {
@@ -60,22 +46,29 @@
 
 .assetsTable {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
-.assetsTable th,
-.assetsTable td {
+.assetsTable th {
   padding: 1rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.assetsTable td {
+  padding: 1.25rem 1rem;
   text-align: center;
   border-bottom: 1px solid var(--border-color);
   vertical-align: middle;
   white-space: nowrap;
-}
-
-.assetsTable th {
-  color: var(--text-light);
-  font-size: 0.8rem;
-  text-transform: uppercase;
+  color: var(--text-primary);
+  font-size: 0.95rem;
 }
 
 .assetsTable tbody tr:last-child td {
@@ -90,41 +83,118 @@
 }
 
 .tag {
-  padding: 0.25rem 0.6rem;
+  padding: 0.25rem 0.75rem;
   border-radius: 16px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--white);
-  min-width: 60px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  min-width: 70px;
   text-align: center;
   display: inline-block;
 }
 
 .tagPositive {
-  background-color: var(--success);
-}
-
-.tagNegative {
-  background-color: var(--danger);
-}
-
-.positive {
+  background-color: rgba(0, 196, 140, 0.15);
   color: var(--success);
 }
 
-.negative {
+.tagNegative {
+  background-color: rgba(255, 59, 48, 0.15);
   color: var(--danger);
+}
+
+.positive {
+  color: var(--success) !important;
+  font-weight: 600;
+}
+
+.negative {
+  color: var(--danger) !important;
+  font-weight: 600;
 }
 
 .positive span,
 .negative span {
   display: block;
   font-size: 0.8rem;
-  margin-top: 0.1rem;
+  margin-top: 0.2rem;
+  opacity: 0.9;
+  font-weight: 500;
 }
 
 .centeredMessage {
-  padding: 3rem;
+  padding: 4rem;
   text-align: center;
-  color: var(--text-light);
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .contentCard {
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+  }
+
+  .contentCard h2, .contentCard .subtitle {
+    padding: 0 1rem;
+  }
+
+  .assetsTable thead {
+    display: none;
+  }
+
+  .assetsTable, 
+  .assetsTable tbody, 
+  .assetsTable tr, 
+  .assetsTable td {
+    display: block;
+    width: 100%;
+  }
+
+  .assetsTable tr {
+    margin-bottom: 1rem;
+    border-radius: 16px;
+    padding: 1.5rem;
+    background-color: var(--background-card);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+  }
+
+  .assetsTable td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: right;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+    white-space: normal;
+  }
+  
+  .assetsTable td:last-child {
+    border-bottom: none;
+    padding-top: 1rem;
+  }
+
+  .assetsTable td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    text-align: left;
+    margin-right: 1rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+
+  .assetsTable td[data-label="Ativo"] {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 0.5rem;
+  }
+
+  .assetsTable td[data-label="Ativo"]::before {
+    display: none;
+  }
 }

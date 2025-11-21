@@ -129,22 +129,47 @@ export function Dashboard() {
           </div>
           <div className={styles.chartWrapper}>
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={formattedChartData} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
+              <AreaChart data={formattedChartData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="chartColor" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#0088FE" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#0088FE" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#0056FF" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#0056FF" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <XAxis dataKey="date" tickLine={false} axisLine={false} tick={{ fill: '#888' }} />
-                <YAxis orientation="left" tickLine={false} axisLine={false} tickFormatter={(value) => new Intl.NumberFormat('pt-BR').format(value)} tick={{ fill: '#888' }} />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: '#1a222e', border: 'none', borderRadius: '8px' }} 
-                  labelStyle={{ color: '#fff' }}
-                  itemStyle={{ color: '#0088FE' }}
-                  formatter={(value: number) => `${value.toLocaleString('pt-BR')} pts`}
+                <XAxis 
+                  dataKey="date" 
+                  tickLine={false} 
+                  axisLine={false} 
+                  tick={{ fill: '#9CA3AF', fontSize: 12 }} 
+                  minTickGap={30}
+                  tickMargin={10}
                 />
-                <Area type="monotone" dataKey="value" name="IBOV" stroke="#0088FE" strokeWidth={2} fillOpacity={1} fill="url(#chartColor)" />
+                <YAxis 
+                  orientation="right" 
+                  tickLine={false} 
+                  axisLine={false} 
+                  tickFormatter={(value) => {
+                    if (value >= 1000) return `${(value / 1000).toFixed(0)}k`;
+                    return value;
+                  }} 
+                  tick={{ fill: '#9CA3AF', fontSize: 12 }} 
+                  width={40}
+                />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: 'var(--background-card)', border: '1px solid var(--border-color)', borderRadius: '8px' }} 
+                  labelStyle={{ color: 'var(--text-secondary)' }}
+                  itemStyle={{ color: 'var(--primary-color)' }}
+                  formatter={(value: number) => [`${value.toLocaleString('pt-BR')} pts`, 'Fechamento']}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="value" 
+                  name="IBOV" 
+                  stroke="#0056FF" 
+                  strokeWidth={2} 
+                  fillOpacity={1} 
+                  fill="url(#chartColor)" 
+                />
               </AreaChart>
             </ResponsiveContainer>
           </div>

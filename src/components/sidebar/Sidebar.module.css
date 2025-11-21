@@ -1,11 +1,13 @@
 .sidebar {
   width: 260px;
-  background-color: var(--brand-black);
-  color: var(--white);
+  background-color: var(--background-card);
+  color: var(--text-secondary);
   padding: 2rem 1.5rem;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  border-right: 1px solid var(--border-color);
+  transition: background-color 0.3s ease;
 }
 
 .logoContainer {
@@ -17,7 +19,6 @@
 .logoImage {
   max-width: 140px;
   height: auto;
-  filter: brightness(0) invert(1); 
 }
 
 .nav {
@@ -33,21 +34,21 @@
   padding: 0.9rem 1.5rem;
   border-radius: var(--radius-pill);
   text-decoration: none;
-  color: #9CA3AF;
+  color: var(--text-secondary);
   font-weight: 500;
   font-size: 0.95rem;
   transition: all 0.2s ease;
 }
 
 .navLink:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background-color: var(--background-light);
+  color: var(--primary-color);
   transform: translateX(4px);
 }
 
 .active {
   background-color: var(--primary-color);
-  color: #fff;
+  color: #ffffff !important;
   font-weight: 600;
   box-shadow: 0 4px 12px rgba(0, 86, 255, 0.4);
 }

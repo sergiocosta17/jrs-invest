@@ -115,18 +115,18 @@ export function Carteira() {
             <tbody>
               {positions.map(pos => (
                 <tr key={pos.asset}>
-                  <td><div className={styles.assetName}>{pos.asset}</div></td>
-                  <td>{pos.quantity}</td>
-                  <td>{Number(pos.average_price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-                  <td>{pos.current_price?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-                  <td>
+                  <td data-label="Ativo"><div className={styles.assetName}>{pos.asset}</div></td>
+                  <td data-label="Quantidade">{pos.quantity}</td>
+                  <td data-label="Preço Médio">{Number(pos.average_price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                  <td data-label="Preço Atual">{pos.current_price?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                  <td data-label="Variação Diária">
                     <span className={`${styles.tag} ${pos.daily_change && pos.daily_change >= 0 ? styles.tagPositive : styles.tagNegative}`}>
                       {pos.daily_change?.toFixed(2)}%
                     </span>
                   </td>
-                  <td>{Number(pos.total_invested).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-                  <td>{pos.current_value?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-                  <td className={pos.result_value && pos.result_value >= 0 ? styles.positive : styles.negative}>
+                  <td data-label="Total Investido">{Number(pos.total_invested).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                  <td data-label="Valor Atual">{pos.current_value?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                  <td data-label="Resultado" className={pos.result_value && pos.result_value >= 0 ? styles.positive : styles.negative}>
                     {pos.result_value?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                     <span>({pos.result_percent?.toFixed(2)}%)</span>
                   </td>
