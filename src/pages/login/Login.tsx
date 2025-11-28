@@ -3,6 +3,8 @@ import * as Yup from 'yup';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { FiMail, FiArrowRight } from 'react-icons/fi';
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { auth } from '../../services/firebase';
 import api from '../../services/api';
 import { PasswordInput } from '../../components/password-input/PasswordInput';
 import './Login.css';
@@ -15,6 +17,26 @@ const LoginSchema = Yup.object().shape({
 
 export function Login() {
   const navigate = useNavigate();
+
+  const handleGoogleLogin = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      
+      const response = await api.post('/api/google-login', {
+        email: user.email,
+        name: user.displayName,
+        googleId: user.uid
+      });
+
+      localStorage.setItem('authToken', response.data.token);
+      toast.success(`Bem-vindo, ${user.displayName}!`);
+      navigate('/dashboard', { replace: true });
+    } catch (error) {
+      toast.error("Erro ao autenticar com Google.");
+    }
+  };
 
   return (
     <div className="login-page">
@@ -29,6 +51,7 @@ export function Login() {
             © {new Date().getFullYear()} JRS Invest
           </div>
         </div>
+
         <div className="login-form-wrapper">
           <div className="form-header">
             <h2>Acesse sua conta</h2>
@@ -94,7 +117,8 @@ export function Login() {
                 <div className="separator">
                   <span>ou</span>
                 </div>
-                <button type="button" className="social-button">
+
+                <button type="button" className="social-button" onClick={handleGoogleLogin}>
                   <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width="20" />
                   Entrar com Google
                 </button>

@@ -3,6 +3,7 @@ import * as Yup from 'yup';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { FiMail, FiArrowRight, FiArrowLeft } from 'react-icons/fi';
+import api from '../../services/api';
 import styles from './ForgotPassword.module.css';
 import JRSLogo from '../../assets/jrs-Invest-logo-sem-nome.svg';
 
@@ -26,6 +27,7 @@ export function ForgotPassword() {
             © {new Date().getFullYear()} JRS Invest
           </div>
         </div>
+
         <div className={styles.formWrapper}>
           <div className={styles.formHeader}>
             <h2>Esqueceu a senha?</h2>
@@ -37,16 +39,12 @@ export function ForgotPassword() {
             validationSchema={ForgotPasswordSchema}
             onSubmit={async (values, { setSubmitting, resetForm }) => {
               try {
-                
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                
+                await api.post('/api/forgot-password', values);
                 toast.success(`Um link de recuperação foi enviado para ${values.email}`);
                 resetForm();
-                
                 setTimeout(() => navigate('/login'), 3000);
-                
               } catch (error) {
-                toast.error('Ocorreu um erro. Tente novamente mais tarde.');
+                toast.error('Ocorreu um erro ao enviar o e-mail. Verifique se o endereço está correto.');
               } finally {
                 setSubmitting(false);
               }
@@ -54,7 +52,6 @@ export function ForgotPassword() {
           >
             {({ isSubmitting, errors, touched }) => (
               <Form className={styles.form}>
-                
                 <div className={styles.formGroup}>
                   <label htmlFor="email">E-mail cadastrado</label>
                   <div className={styles.inputWithIcon}>

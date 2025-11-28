@@ -8,6 +8,7 @@ const csv = require('fast-csv');
 const PDFDocument = require('pdfkit');
 const auth = require('./middleware/auth');
 const yahooFinance = require('yahoo-finance2').default;
+const nodemailer = require('nodemailer');
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -46,7 +47,7 @@ app.post('/api/register', async (req, res) => {
       user: newUser.rows[0]
     });
   } catch (err) {
-    console.error("Erro ao cadastrar usuário:", err);
+    console.error(err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
@@ -82,8 +83,90 @@ app.post('/api/login', async (req, res) => {
       user: user
     });
   } catch (err) {
-    console.error("Erro no login:", err);
+    console.error(err);
     res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+});
+
+app.post('/api/google-login', async (req, res) => {
+  const { email, name, googleId } = req.body;
+
+  if (!email || !googleId) {
+    return res.status(400).json({ error: 'Dados do Google incompletos.' });
+  }
+
+  try {
+    const userResult = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    
+    let user;
+
+    if (userResult.rowCount > 0) {
+      user = userResult.rows[0];
+    } else {
+      const randomPassword = Math.random().toString(36).slice(-8);
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(randomPassword, salt);
+
+      const newUser = await pool.query(
+        'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, email, name',
+        [name, email, hashedPassword]
+      );
+      user = newUser.rows[0];
+    }
+
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '8h' }
+    );
+
+    res.json({
+      message: 'Login com Google realizado com sucesso!',
+      token: token,
+      user: { id: user.id, email: user.email, name: user.name }
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erro interno ao processar login com Google.' });
+  }
+});
+
+app.post('/api/forgot-password', async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const userResult = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+
+    if (userResult.rowCount === 0) {
+      return res.status(404).json({ error: 'E-mail não encontrado.' });
+    }
+
+    const user = userResult.rows[0];
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    const resetLink = `http://localhost:5173/reset-password?token=${token}`;
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail', 
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    });
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Recuperação de Senha - JRS Invest',
+      html: `<p>Você solicitou a recuperação de senha.</p><p>Clique no link para redefinir: <a href="${resetLink}">Redefinir Senha</a></p>`
+    });
+
+    res.json({ message: 'E-mail de recuperação enviado com sucesso.' });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erro ao enviar e-mail de recuperação.' });
   }
 });
 
@@ -95,7 +178,7 @@ app.get('/api/profile', auth, async (req, res) => {
     }
     res.json(userProfile.rows[0]);
   } catch (err) {
-    console.error("Erro ao buscar perfil:", err);
+    console.error(err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
@@ -109,7 +192,7 @@ app.put('/api/profile', auth, async (req, res) => {
     );
     res.json(updatedUser.rows[0]);
   } catch (err) {
-    console.error("Erro ao atualizar perfil:", err);
+    console.error(err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
@@ -135,7 +218,7 @@ app.put('/api/profile/change-password', auth, async (req, res) => {
     await pool.query('UPDATE users SET password = $1 WHERE id = $2', [hashedNewPassword, userId]);
     res.json({ message: 'Senha alterada com sucesso!' });
   } catch (err) {
-    console.error("Erro ao alterar senha:", err);
+    console.error(err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
@@ -145,7 +228,7 @@ app.get('/api/operations', auth, async (req, res) => {
     const result = await pool.query('SELECT * FROM operations WHERE user_id = $1 ORDER BY date DESC', [req.user.userId]);
     res.json(result.rows);
   } catch (err) {
-    console.error("Erro ao buscar operações:", err);
+    console.error(err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
@@ -160,7 +243,7 @@ app.post('/api/operations', auth, async (req, res) => {
     );
     res.status(201).json(newOperation.rows[0]);
   } catch (err) {
-    console.error("Erro ao adicionar operação:", err);
+    console.error(err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
@@ -179,7 +262,7 @@ app.put('/api/operations/:id', auth, async (req, res) => {
     }
     res.json(updatedOp.rows[0]);
   } catch (err) {
-    console.error("Erro ao atualizar operação:", err);
+    console.error(err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
@@ -193,7 +276,7 @@ app.delete('/api/operations/:id', auth, async (req, res) => {
     }
     res.status(204).send();
   } catch (err) {
-    console.error("Erro ao excluir operação:", err);
+    console.error(err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
@@ -222,7 +305,7 @@ app.get('/api/portfolio/detailed', auth, async (req, res) => {
     const result = await pool.query(detailedQuery, [req.user.userId]);
     res.json(result.rows);
   } catch (err) {
-    console.error("Erro ao buscar carteira detalhada:", err);
+    console.error(err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
@@ -266,7 +349,7 @@ app.get('/api/reports', auth, async (req, res) => {
       res.status(400).json({ error: 'Formato de relatório inválido. Use "pdf" ou "csv".' });
     }
   } catch (err) {
-    console.error("Erro ao gerar relatório:", err);
+    console.error(err);
     res.status(500).json({ error: 'Erro interno ao gerar o relatório.' });
   }
 });
@@ -311,7 +394,7 @@ app.get('/api/chart/:ticker', auth, async (req, res) => {
       res.json(formattedResult);
 
   } catch (err) {
-      console.warn(`Aviso: Dados do gráfico não encontrados para o ticker "${ticker}". Retornando dados vazios. Erro: ${err.message}`);
+      console.warn(`Aviso: Dados do gráfico não encontrados para o ticker "${ticker}".`);
       res.json({
           symbol: ticker.toUpperCase(),
           regularMarketPrice: 0,
@@ -368,7 +451,7 @@ app.get('/api/quotes/:tickers', auth, async (req, res) => {
         };
       }
       
-      console.warn(`Aviso: Cotação não encontrada para o ticker "${originalTicker}". Retornando dados padrão.`);
+      console.warn(`Aviso: Cotação não encontrada para o ticker "${originalTicker}".`);
       return {
         symbol: originalTicker,
         shortName: `${originalTicker} (Inválido)`,
@@ -387,7 +470,7 @@ app.get('/api/quotes/:tickers', auth, async (req, res) => {
     res.json(finalResults);
     
   } catch (err) {
-    console.error(`Erro ao buscar dados do Yahoo Finance para: "${tickers}"`, err);
+    console.error(err);
     const errorResults = tickerList.map(originalTicker => ({
       symbol: originalTicker.toUpperCase(),
       shortName: `${originalTicker.toUpperCase()} (Erro)`,
@@ -432,11 +515,10 @@ app.get('/api/search/stocks', auth, async (req, res) => {
     res.json(searchData);
 
   } catch (err) {
-    console.error(`Erro na busca do Yahoo Finance para "${searchTerm}":`, err);
+    console.error(err);
     res.status(500).json({ error: 'Não foi possível realizar a busca pelas ações.' });
   }
 });
-
 
 app.listen(port, () => {
   console.log(`Servidor back-end rodando em http://localhost:${port}`);
