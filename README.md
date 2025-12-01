@@ -57,7 +57,7 @@ Siga os passos abaixo para executar o projeto em seu ambiente local.
 
 ### Instalação
 
-1.  **Clone o repositório:**(opcional)
+1.  **Clone o repositório:**
     ```bash
     git clone [https://github.com/seu-usuario/jrs-invest.git](https://github.com/seu-usuario/jrs-invest.git)
     cd jrs-invest
@@ -71,7 +71,7 @@ Siga os passos abaixo para executar o projeto em seu ambiente local.
 
 3.  **Instale as dependências do Frontend:**
     ```bash
-    cd jrs-invest(raiz)
+    # no diretório /jrs-invest(raiz)
     npm i
     ```
 
@@ -123,9 +123,6 @@ Siga os passos abaixo para executar o projeto em seu ambiente local.
 ## 👤 Autor
 
 -- @sgneto_
--- @jotaalvesss
--- @rodolfoguedess
--- Samuel Lindberg
 
 * LinkedIn: (https://www.linkedin.com/in/s%C3%A9rgio-costa-498a25278/)
 * GitHub: (https://github.com/sergiocosta17)
