@@ -71,7 +71,7 @@ Siga os passos abaixo para executar o projeto em seu ambiente local.
 
 3.  **Instale as dependências do Frontend:**
     ```bash
-    cd jrs-invest(raiz)
+    # no diretório /jrs-invest(raiz)
     npm i
     ```
 
