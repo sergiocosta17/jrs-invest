@@ -57,7 +57,7 @@ Siga os passos abaixo para executar o projeto em seu ambiente local.
 
 ### Instalação
 
-1.  **Clone o repositório:**(opcional)
+1.  **Clone o repositório:**
     ```bash
     git clone [https://github.com/seu-usuario/jrs-invest.git](https://github.com/seu-usuario/jrs-invest.git)
     cd jrs-invest
