@@ -57,7 +57,7 @@ Siga os passos abaixo para executar o projeto em seu ambiente local.
 
 ### Instalação
 
-1.  **Clone o repositório:**
+1.  **Clone o repositório:**(opcional)
     ```bash
     git clone [https://github.com/seu-usuario/jrs-invest.git](https://github.com/seu-usuario/jrs-invest.git)
     cd jrs-invest
@@ -65,36 +65,55 @@ Siga os passos abaixo para executar o projeto em seu ambiente local.
 
 2.  **Instale as dependências do Backend:**
     ```bash
-    cd jrs-invest-backend
-    npm install
+    cd backend
+    npm i
     ```
 
 3.  **Instale as dependências do Frontend:**
     ```bash
     cd jrs-invest(raiz)
-    npm install
+    npm i
     ```
 
 4.  **Configuração do Ambiente:**
-    * No diretório `backend`, renomeie o arquivo `.env.example` para `.env`.
-    * Preencha as variáveis de ambiente no arquivo `.env` com as suas credenciais do banco de dados e a chave secreta para o JWT.
+    * Preencha as variáveis de ambiente no arquivo `.env` com as suas credenciais do banco de dados.
     ```env
     DATABASE_URL="postgresql://USUARIO:SENHA@HOST:PORTA/NOME_DO_BANCO"
-    JWT_SECRET="SUA_CHAVE_SECRETA_AQUI"
-    PORT=3001
     ```
+5.  **Criação das tabelas no postgreSQL:**
+    * Após criar seu database, vá em query tool e rode esse script para criar as tabelas e os processos de login e operações funcionem normalmente.
+
+        CREATE TABLE users (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(255),
+            email VARCHAR(255) UNIQUE NOT NULL,
+            password VARCHAR(255) NOT NULL,
+            birth_date DATE,
+            phone VARCHAR(50)
+        );
+
+        CREATE TABLE operations (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            date TIMESTAMP WITH TIME ZONE,
+            type VARCHAR(50),
+            asset VARCHAR(50),
+            quantity NUMERIC,
+            price NUMERIC,
+            total NUMERIC
+        );
 
 ### Execução
 
 1.  **Inicie o servidor Backend:**
     ```bash
-    # no diretório /jrs-invest-backend
+    # no diretório /backend
     node index.js
     ```
 
 2.  **Inicie a aplicação Frontend:**
     ```bash
-    # no diretório /jrs-invest(raiz do projeto)
+    # no diretório /jrs-invest(raiz)
     npm run dev
     ```
     Acesse `http://localhost:5173` (ou a porta indicada no terminal) no seu navegador.
@@ -104,6 +123,9 @@ Siga os passos abaixo para executar o projeto em seu ambiente local.
 ## 👤 Autor
 
 -- @sgneto_
+-- @jotaalvesss
+-- @rodolfoguedess
+-- Samuel Lindberg
 
 * LinkedIn: (https://www.linkedin.com/in/s%C3%A9rgio-costa-498a25278/)
 * GitHub: (https://github.com/sergiocosta17)
