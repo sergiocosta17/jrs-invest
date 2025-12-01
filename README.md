@@ -123,9 +123,6 @@ Siga os passos abaixo para executar o projeto em seu ambiente local.
 ## 👤 Autor
 
 -- @sgneto_
--- @jotaalvesss
--- @rodolfoguedess
--- Samuel Lindberg
 
 * LinkedIn: (https://www.linkedin.com/in/s%C3%A9rgio-costa-498a25278/)
 * GitHub: (https://github.com/sergiocosta17)
